@@ -118,7 +118,12 @@
         </div>
       </form>`;
 
-    const m = openModal(html, { wide: true, dismissable: false });
+    let searchWin = null; // image search window to close with the editor (auto-close setting)
+    const m = openModal(html, {
+      wide: true,
+      dismissable: false,
+      onClose: () => { try { if (searchWin && !searchWin.closed) searchWin.close(); } catch (e) { /* already gone */ } },
+    });
     const el = m.el;
     const form = el.querySelector('form');
     const drop = el.querySelector('[data-drop]');
@@ -157,7 +162,10 @@
     rm.addEventListener('click', () => { it.image = ''; drop.innerHTML = '<span>Drop, paste (Ctrl+V)<br>or click to add image</span>'; rm.hidden = true; });
     el.querySelector('[data-fav]').addEventListener('click', (e) => { it.fav = !it.fav; e.currentTarget.classList.toggle('on', it.fav); });
     const searchBtn = el.querySelector('[data-imgsearch]');
-    if (searchBtn) searchBtn.addEventListener('click', () => PV.openImageSearch(form.elements.name.value, form.elements.source.value));
+    if (searchBtn) searchBtn.addEventListener('click', () => {
+      const w = PV.openImageSearch(form.elements.name.value, form.elements.source.value);
+      if (w) searchWin = w;
+    });
 
     const links = el.querySelector('[data-links]');
     function renderLinks() {

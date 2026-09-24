@@ -58,9 +58,30 @@ function createWindow() {
   win.once('ready-to-show', () => win.show());
 
   // Keep the app on its own page; web links open in the normal browser.
-  win.webContents.setWindowOpenHandler(({ url }) => {
+  win.webContents.setWindowOpenHandler(({ url, frameName }) => {
+    // Image search with auto-close: an app-owned window the page can close again.
+    if (frameName === 'pv-image-search' && /^https:\/\//i.test(url)) {
+      return {
+        action: 'allow',
+        overrideBrowserWindowOptions: {
+          width: 1100,
+          height: 900,
+          title: 'Image search',
+          autoHideMenuBar: true,
+          icon: path.join(__dirname, '..', 'build', 'icon.png'),
+          webPreferences: { contextIsolation: true, sandbox: true, nodeIntegration: false },
+        },
+      };
+    }
     openExternal(url);
     return { action: 'deny' };
+  });
+  // Pop-ups from inside the search window go to the normal browser.
+  win.webContents.on('did-create-window', (child) => {
+    child.webContents.setWindowOpenHandler(({ url }) => {
+      openExternal(url);
+      return { action: 'deny' };
+    });
   });
   win.webContents.on('will-navigate', (e, url) => {
     if (url.split('#')[0] === win.webContents.getURL().split('#')[0]) return;

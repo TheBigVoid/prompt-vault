@@ -38,7 +38,7 @@ It's one static web page with no server, no account and no build step. Your libr
 - Search, tags, favorites, and sorting by name, newest or most used.
 
 ### 🧪 Experimental: image search
-Turn it on in **Settings → Experimental**. A 🔍 button then appears in the Name field and on Library cards. It opens a Pinterest (or Google / Bing Images) search for the name + source in your browser. Drag the image you like back onto the item.
+Turn it on in **Settings → Experimental**. A 🔍 button then appears in the Name field and on Library cards. It opens a Pinterest (or Google / Bing Images) search for the name + source in your browser. Drag the image you like back onto the item. Turn on **Auto-close** to have the search open in its own window that closes by itself when you close the character editor.
 
 ### 📥 Import
 - **Scan your LoRA folder.** It reads names, trigger words, base model and preview images from the **Stability Matrix** (`.cm-info.json` + `.preview.*`), **CivitAI Helper** (`.civitai.info`) and **A1111** (`.json`) files next to your models. Model files themselves are never read or uploaded.

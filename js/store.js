@@ -74,6 +74,7 @@
     imageSearch: false,
     imageSearchSite: 'pinterest',
     imageSearchExtra: '',
+    imageSearchAutoClose: false, // open in an app-owned window that closes with the editor
   };
 
   const S = { items: new Map(), presets: [], history: [], settings: null, builder: null };

@@ -121,9 +121,20 @@ window.PV = window.PV || {};
     const q = [name, source, st.imageSearchExtra].map((s) => String(s || '').trim()).filter(Boolean).join(' ');
     if (!q) { toast('Type a name first'); return; }
     const site = IMAGE_SEARCH_SITES[st.imageSearchSite] || IMAGE_SEARCH_SITES.pinterest;
-    // Opens in your normal browser (the desktop app hands web links to it).
-    window.open(site.url(encodeURIComponent(q)), '_blank', 'noopener');
+    const url = site.url(encodeURIComponent(q));
+    if (!st.imageSearchAutoClose) {
+      // Opens in your normal browser (the desktop app hands web links to it).
+      window.open(url, '_blank', 'noopener');
+      return null;
+    }
+    // Auto-close: a named popup we keep a handle to, so it can be closed later.
+    // The same name reuses one window for every search.
+    const w = window.open(url, IMAGE_SEARCH_WINDOW, 'popup,width=1100,height=900');
+    if (!w) { toast('The search window was blocked. Allow popups for this site.', 'err', 5000); return null; }
+    try { w.opener = null; } catch (e) { /* cross-origin, fine */ }
+    return w;
   }
+  const IMAGE_SEARCH_WINDOW = 'pv-image-search';
 
   // ---------- Modals ----------
   function openModal(html, { wide = false, dismissable = true, onClose } = {}) {

@@ -63,6 +63,9 @@
               <select class="input" data-s="imageSearchSite">${Object.entries(PV.IMAGE_SEARCH_SITES).map(([k, v]) => `<option value="${k}" ${k === st.imageSearchSite ? 'selected' : ''}>${esc(v.label)}</option>`).join('')}</select></label>
             <label>Extra search words <small class="muted">(optional, e.g. "fanart" or "pose reference")</small>
               <input class="input" data-s="imageSearchExtra" value="${esc(st.imageSearchExtra)}" placeholder="added after name + source"></label>
+            <label class="check wrap"><input type="checkbox" data-s="imageSearchAutoClose" ${st.imageSearchAutoClose ? 'checked' : ''}>
+              <span><b>Auto-close the search</b> when I close the character editor.
+              <small class="muted">The search then opens in its own small window instead of your normal browser, because the app can only close windows it opened. You may need to log in to Pinterest there once.</small></span></label>
           </div>
         </section>
 
