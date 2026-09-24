@@ -379,3 +379,21 @@ label { display: block; }
   .rc-img { max-width: 220px; }
   #rand-char span { display: none; }
 }
+
+/* ---------- Image search (experimental) ---------- */
+.input-wrap { position: relative; display: block; }
+.input-wrap .input { padding-right: 40px; }
+.in-btn {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 32px; height: 30px;
+  border: 0; border-radius: 7px; background: transparent; cursor: pointer; font-size: 15px;
+}
+.in-btn:hover { background: var(--accent-bg); }
+.search-btn {
+  position: absolute; top: 6px; left: 6px; width: 30px; height: 30px; border-radius: 50%; border: 0; cursor: pointer;
+  background: rgba(0,0,0,.45); font-size: 14px; opacity: 0; transition: opacity .12s;
+}
+.card:hover .search-btn, .card:focus-within .search-btn { opacity: 1; }
+.search-btn:hover { background: var(--accent); }
+.check.wrap { white-space: normal; align-items: flex-start; margin-bottom: 10px; }
+.check.wrap input { margin-top: 2px; flex: none; }
+@media (hover: none) { .search-btn, .fav-btn { opacity: 1; } }

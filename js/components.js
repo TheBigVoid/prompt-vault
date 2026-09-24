@@ -29,6 +29,7 @@
     return `<article class="card ${compact ? 'compact' : ''} ${picked ? 'picked' : ''}" data-id="${esc(it.id)}" tabindex="0">
       <div class="card-media">${thumb(it)}
         <button class="fav-btn ${it.fav ? 'on' : ''}" data-act="fav" title="Favorite" aria-label="Favorite">★</button>
+        ${!compact && S.settings.imageSearch && it.cat !== 'lora' ? '<button class="search-btn" data-act="imgsearch" title="Search for images of this" aria-label="Image search">🔍</button>' : ''}
       </div>
       <div class="card-body">
         <div class="card-title" title="${esc(it.name)}">${esc(it.name)}</div>
@@ -78,7 +79,8 @@
           </div>
           <div class="ed-fields">
             <div class="row2">
-              <label>Name<input class="input" name="name" value="${esc(it.name)}" required></label>
+              <label>Name<span class="input-wrap"><input class="input" name="name" value="${esc(it.name)}" required>
+                ${S.settings.imageSearch ? `<button type="button" class="in-btn" data-imgsearch title="Search ${esc((PV.IMAGE_SEARCH_SITES[S.settings.imageSearchSite] || PV.IMAGE_SEARCH_SITES.pinterest).label)} for images of this">🔍</button>` : ''}</span></label>
               <label title="Series, game or franchise. Used for sorting and filtering.">Source
                 <input class="input" name="source" value="${esc(it.source || '')}" list="pv-sources" placeholder="Series / game, e.g. One Piece">
                 <datalist id="pv-sources">${PV.sources().map((s) => `<option value="${esc(s)}">`).join('')}</datalist></label>
@@ -154,6 +156,8 @@
     });
     rm.addEventListener('click', () => { it.image = ''; drop.innerHTML = '<span>Drop, paste (Ctrl+V)<br>or click to add image</span>'; rm.hidden = true; });
     el.querySelector('[data-fav]').addEventListener('click', (e) => { it.fav = !it.fav; e.currentTarget.classList.toggle('on', it.fav); });
+    const searchBtn = el.querySelector('[data-imgsearch]');
+    if (searchBtn) searchBtn.addEventListener('click', () => PV.openImageSearch(form.elements.name.value, form.elements.source.value));
 
     const links = el.querySelector('[data-links]');
     function renderLinks() {

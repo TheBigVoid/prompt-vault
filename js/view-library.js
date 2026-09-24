@@ -123,7 +123,9 @@
     if (!cardEl) return;
     const it = S.items.get(cardEl.dataset.id);
     const act = e.target.closest('[data-act]')?.dataset.act;
-    if (act === 'fav') {
+    if (act === 'imgsearch') {
+      PV.openImageSearch(it.name, it.source);
+    } else if (act === 'fav') {
       it.fav = !it.fav;
       PV.saveItem(it);
       render();

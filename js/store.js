@@ -70,6 +70,10 @@
     defaultPrefix: 'masterpiece, best quality, amazing quality',
     defaultNegative: 'lowres, worst quality, low quality, bad anatomy, bad hands, extra fingers, watermark, signature, text',
     theme: 'system',
+    // Experimental: 🔍 button that opens an image search for an item's name
+    imageSearch: false,
+    imageSearchSite: 'pinterest',
+    imageSearchExtra: '',
   };
 
   const S = { items: new Map(), presets: [], history: [], settings: null, builder: null };

@@ -110,6 +110,21 @@ window.PV = window.PV || {};
       });
   }
 
+  // ---------- Image search (experimental setting) ----------
+  const IMAGE_SEARCH_SITES = {
+    pinterest: { label: 'Pinterest', url: (q) => `https://www.pinterest.com/search/pins/?q=${q}` },
+    google: { label: 'Google Images', url: (q) => `https://www.google.com/search?tbm=isch&q=${q}` },
+    bing: { label: 'Bing Images', url: (q) => `https://www.bing.com/images/search?q=${q}` },
+  };
+  function openImageSearch(name, source) {
+    const st = PV.S.settings;
+    const q = [name, source, st.imageSearchExtra].map((s) => String(s || '').trim()).filter(Boolean).join(' ');
+    if (!q) { toast('Type a name first'); return; }
+    const site = IMAGE_SEARCH_SITES[st.imageSearchSite] || IMAGE_SEARCH_SITES.pinterest;
+    // Opens in your normal browser (the desktop app hands web links to it).
+    window.open(site.url(encodeURIComponent(q)), '_blank', 'noopener');
+  }
+
   // ---------- Modals ----------
   function openModal(html, { wide = false, dismissable = true, onClose } = {}) {
     const root = $('#modal-root');
@@ -194,6 +209,6 @@ window.PV = window.PV || {};
 
   Object.assign(PV, {
     $, $$, esc, uid, debounce, splitTags, pick, fmtW, slug, stem, timeAgo, rng, newSeed,
-    toast, copyText, download, fileToThumb, isImageFile, dragHasImage, imageFromDrop, openModal, confirmBox, promptBox, normBase, compatLevel,
+    IMAGE_SEARCH_SITES, openImageSearch, toast, copyText, download, fileToThumb, isImageFile, dragHasImage, imageFromDrop, openModal, confirmBox, promptBox, normBase, compatLevel,
   });
 })(window.PV);

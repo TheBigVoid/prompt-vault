@@ -54,6 +54,19 @@
         </section>
 
         <section class="panel">
+          <div class="panel-head"><h3>🧪 Experimental</h3></div>
+          <label class="check wrap"><input type="checkbox" data-s="imageSearch" ${st.imageSearch ? 'checked' : ''}>
+            <span><b>Image search button</b>: adds a 🔍 to the Name field and to Library cards. It opens a search for the name + source in your browser.
+            Drag the image you like back onto the item to use it.</span></label>
+          <div class="form-grid" ${st.imageSearch ? '' : 'hidden'}>
+            <label>Search on
+              <select class="input" data-s="imageSearchSite">${Object.entries(PV.IMAGE_SEARCH_SITES).map(([k, v]) => `<option value="${k}" ${k === st.imageSearchSite ? 'selected' : ''}>${esc(v.label)}</option>`).join('')}</select></label>
+            <label>Extra search words <small class="muted">(optional, e.g. "fanart" or "pose reference")</small>
+              <input class="input" data-s="imageSearchExtra" value="${esc(st.imageSearchExtra)}" placeholder="added after name + source"></label>
+          </div>
+        </section>
+
+        <section class="panel">
           <div class="panel-head"><h3>🎨 Appearance</h3></div>
           <div class="seg" role="group" aria-label="Theme">
             ${['system', 'dark', 'light'].map((t) => `<button class="${st.theme === t ? 'on' : ''}" data-act="theme" data-v="${t}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}
@@ -121,6 +134,7 @@
       else S.settings[k] = t.value;
       PV.saveSettings();
       toast('Saved', 'ok', 1200);
+      if (k === 'imageSearch') render();
     });
     el.addEventListener('click', async (e) => {
       const btn = e.target.closest('[data-act]');
