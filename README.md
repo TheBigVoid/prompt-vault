@@ -55,6 +55,19 @@ It's one static web page with no server, no account and no build step. Your libr
 - Everything stays in your browser's local storage for the site you opened. The GitHub Pages copy and a local `index.html` copy are **separate libraries**, so use **Import → Export backup** to move data between them or to another PC.
 - Clearing browser site data deletes the library, so export a backup now and then.
 
+## Desktop app (Windows)
+
+The same app can run in its own window with desktop and Start menu shortcuts, using Electron:
+
+```bash
+npm install
+npm run dist
+```
+
+Then run `dist\PromptVault-Setup-<version>.exe`. It installs per-user with no admin needed. To try it without installing, use `npm start`.
+
+The desktop app keeps its own library in `%APPDATA%\Prompt Vault`, so browser data isn't shared with it. Use **Export / Import backup** to move your library in. Keys: **F5** reload, **F11** fullscreen, **F12** dev tools.
+
 ## Development
 
 Plain HTML, CSS and JavaScript with no dependencies. To run it with a local server:
