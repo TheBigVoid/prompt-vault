@@ -75,6 +75,7 @@
     imageSearchSite: 'pinterest',
     imageSearchExtra: '',
     imageSearchAutoClose: false, // open in an app-owned window that closes with the editor
+    quickAdd: false, // Experimental: add characters from downloadmost.com's Danbooru list
   };
 
   const S = { items: new Map(), presets: [], history: [], settings: null, builder: null };

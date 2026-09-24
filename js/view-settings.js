@@ -67,6 +67,12 @@
               <span><b>Auto-close the search</b> when I close the character editor.
               <small class="muted">The search then opens in its own small window instead of your normal browser, because the app can only close windows it opened. You may need to log in to Pinterest there once.</small></span></label>
           </div>
+          <hr class="sep">
+          <label class="check wrap"><input type="checkbox" data-s="quickAdd" ${st.quickAdd ? 'checked' : ''}>
+            <span><b>Character quick add</b>: adds a ⚡ Quick add button to Library → Characters. It opens the
+            <a href="https://www.downloadmost.com/NoobAI-XL/danbooru-character/" target="_blank" rel="noopener">Danbooru character list</a>.
+            In the desktop app every character there gets a ➕ button that creates a card with its name, source, prompt tags and picture.
+            In the browser you copy & paste the tags instead.</span></label>
         </section>
 
         <section class="panel">

@@ -89,6 +89,7 @@
             <select class="input" data-sort>
               ${[['name', 'A → Z'], ['source', 'By source'], ['newest', 'Newest'], ['used', 'Most used'], ['recent', 'Recently used']].map(([v, l]) => `<option value="${v}" ${v === st.sort ? 'selected' : ''}>${l}</option>`).join('')}
             </select>
+            ${st.cat === 'character' && S.settings.quickAdd ? '<button class="btn" data-act="quick-add" title="Add characters from the Danbooru character list (experimental)">⚡ Quick add</button>' : ''}
             ${canAdd ? `<button class="btn primary" data-act="new">＋ New ${isLoraCat ? 'LoRA' : ''}</button>` : ''}
           </div>
           ${tags.length ? `<div class="tag-bar">${tags.map(([t, n]) => `<button class="tag ${st.tag === t ? 'on' : ''}" data-tag="${esc(t)}">${esc(t)} <small>${n}</small></button>`).join('')}</div>` : ''}
@@ -115,6 +116,10 @@
     }
     const tag = e.target.closest('[data-tag]');
     if (tag) { st.tag = st.tag === tag.dataset.tag ? '' : tag.dataset.tag; render(); return; }
+    if (e.target.closest('[data-act="quick-add"]')) {
+      PV.openQuickAdd();
+      return;
+    }
     if (e.target.closest('[data-act="new"]')) {
       PV.editItem(PV.newItem(st.cat), { isNew: true });
       return;

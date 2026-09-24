@@ -397,3 +397,4 @@ label { display: block; }
 .check.wrap { white-space: normal; align-items: flex-start; margin-bottom: 10px; }
 .check.wrap input { margin-top: 2px; flex: none; }
 @media (hover: none) { .search-btn, .fav-btn { opacity: 1; } }
+.sep { border: 0; border-top: 1px solid var(--line); margin: 14px 0; }

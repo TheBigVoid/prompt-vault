@@ -41,6 +41,9 @@ It's one static web page with no server, no account and no build step. Your libr
 Turn it on in **Settings → Experimental**. A 🔍 button then appears in the Name field and on Library cards. It opens a Pinterest (or Google / Bing Images) search for the name + source in your browser. Drag the image you like back onto the item. Turn on **Auto-close** to have the search open in its own window that closes by itself when you close the character editor.
 In the desktop app's search window, **right-click any image → Use this image in Prompt Vault** to put it straight into the open character (or the card you searched from).
 
+### 🧪 Experimental: character quick add
+Turn it on in **Settings → Experimental**. **Library → Characters → ⚡ Quick add** opens the [Danbooru character list](https://www.downloadmost.com/NoobAI-XL/danbooru-character/). In the desktop app, every character there gets a **➕ Add to Prompt Vault** button that creates a card with the name, source (guessed, e.g. *Nami → One Piece*), prompt tags and preview picture. Duplicates are detected. In the browser version you paste the prompt tags into a box instead.
+
 ### 📥 Import
 - **Scan your LoRA folder.** It reads names, trigger words, base model and preview images from the **Stability Matrix** (`.cm-info.json` + `.preview.*`), **CivitAI Helper** (`.civitai.info`) and **A1111** (`.json`) files next to your models. Model files themselves are never read or uploaded.
 - **Read prompts from ComfyUI PNGs.** Drop a generated image on the Import tab's box to pull out the positive and negative prompts, LoRAs and weights (LoraLoader, rgthree Power Lora Loader, `<lora:>` tags) and the checkpoint. A1111/Forge PNGs work too.
