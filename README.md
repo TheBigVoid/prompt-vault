@@ -5,6 +5,7 @@ A local library and prompt builder for AI image generation. Store your **charact
 It's one static web page with no server, no account and no build step. Your library is stored in your own browser (IndexedDB) and never leaves your PC.
 
 **▶ Use it online:** https://thebigvoid.github.io/prompt-vault/
+
 **▶ Or offline:** download the repo and double-click `index.html`.
 
 ---
