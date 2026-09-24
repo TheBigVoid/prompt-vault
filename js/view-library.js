@@ -124,7 +124,15 @@
     const it = S.items.get(cardEl.dataset.id);
     const act = e.target.closest('[data-act]')?.dataset.act;
     if (act === 'imgsearch') {
-      PV.openImageSearch(it.name, it.source);
+      // In the desktop search window, right-click > Use this image sets this card's picture.
+      if (PV.openImageSearch(it.name, it.source)) {
+        PV.searchImageTarget = async (blob) => {
+          it.image = await PV.fileToThumb(blob);
+          await PV.saveItem(it);
+          toast(`Picture set for "${it.name}"`, 'ok');
+          render();
+        };
+      }
     } else if (act === 'fav') {
       it.fav = !it.fav;
       PV.saveItem(it);

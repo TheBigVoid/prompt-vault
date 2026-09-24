@@ -1,7 +1,7 @@
 {
   "name": "prompt-vault",
   "productName": "Prompt Vault",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Library and randomizer for AI image prompts: characters, poses, LoRAs.",
   "main": "electron/main.js",
   "author": "TheBigVoid",

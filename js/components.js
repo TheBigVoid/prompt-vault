@@ -122,10 +122,16 @@
     const m = openModal(html, {
       wide: true,
       dismissable: false,
-      onClose: () => { try { if (searchWin && !searchWin.closed) searchWin.close(); } catch (e) { /* already gone */ } },
+      onClose: () => {
+        if (PV.searchImageTarget === useSearchImage) PV.searchImageTarget = null;
+        try { if (searchWin && !searchWin.closed) searchWin.close(); } catch (e) { /* already gone */ }
+      },
     });
     const el = m.el;
     const form = el.querySelector('form');
+    // Images picked in the desktop search window land here while this editor is open.
+    const useSearchImage = async (blob) => { await setImage(blob); toast('Image added. Remember to Save', 'ok'); };
+    PV.searchImageTarget = useSearchImage;
     const drop = el.querySelector('[data-drop]');
     const fileIn = el.querySelector('[data-file]');
     const rm = el.querySelector('[data-rmimg]');

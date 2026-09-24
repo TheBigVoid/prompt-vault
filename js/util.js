@@ -136,6 +136,24 @@ window.PV = window.PV || {};
   }
   const IMAGE_SEARCH_WINDOW = 'pv-image-search';
 
+  // The desktop app's search window calls this with a data: URL (right-click > Use this image).
+  // Whatever is waiting for an image (the open editor, or a Library card) sets PV.searchImageTarget.
+  PV.searchImageTarget = null;
+  async function receiveSearchImage(dataUrl) {
+    if (!PV.searchImageTarget) {
+      toast('Open a character in Prompt Vault first, then use the image.', 'err', 4000);
+      return false;
+    }
+    try {
+      const blob = await (await fetch(dataUrl)).blob();
+      await PV.searchImageTarget(blob);
+      return true;
+    } catch (e) {
+      toast('Could not read that image', 'err');
+      return false;
+    }
+  }
+
   // ---------- Modals ----------
   function openModal(html, { wide = false, dismissable = true, onClose } = {}) {
     const root = $('#modal-root');
@@ -220,6 +238,6 @@ window.PV = window.PV || {};
 
   Object.assign(PV, {
     $, $$, esc, uid, debounce, splitTags, pick, fmtW, slug, stem, timeAgo, rng, newSeed,
-    IMAGE_SEARCH_SITES, openImageSearch, toast, copyText, download, fileToThumb, isImageFile, dragHasImage, imageFromDrop, openModal, confirmBox, promptBox, normBase, compatLevel,
+    IMAGE_SEARCH_SITES, openImageSearch, receiveSearchImage, toast, copyText, download, fileToThumb, isImageFile, dragHasImage, imageFromDrop, openModal, confirmBox, promptBox, normBase, compatLevel,
   });
 })(window.PV);
