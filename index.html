@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt Vault</title>
+  <meta name="description" content="Store characters, poses, outfits and LoRAs for local AI image generation, and build or randomize prompts for ComfyUI.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#builder"><span class="logo">🎲</span> Prompt Vault</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#builder">Builder</a>
+      <a href="#library">Library</a>
+      <a href="#presets">Presets</a>
+      <a href="#history">History</a>
+      <a href="#import">Import</a>
+      <a href="#settings">Settings</a>
+    </nav>
+    <button class="icon-btn" id="theme-toggle" title="Toggle light/dark" aria-label="Toggle theme">◐</button>
+  </header>
+
+  <main>
+    <section class="view" id="view-builder" hidden></section>
+    <section class="view" id="view-library" hidden></section>
+    <section class="view" id="view-presets" hidden></section>
+    <section class="view" id="view-history" hidden></section>
+    <section class="view" id="view-import" hidden></section>
+    <section class="view" id="view-settings" hidden></section>
+  </main>
+
+  <div id="modal-root"></div>
+  <div id="toasts" aria-live="polite"></div>
+  <div class="drop-overlay" aria-hidden="true"><div>Drop ComfyUI images to read their prompts</div></div>
+
+  <script src="js/util.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/prompt.js"></script>
+  <script src="js/meta.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/view-builder.js"></script>
+  <script src="js/view-library.js"></script>
+  <script src="js/view-saved.js"></script>
+  <script src="js/view-import.js"></script>
+  <script src="js/view-settings.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
