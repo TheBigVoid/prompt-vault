@@ -360,3 +360,11 @@ body.dragging .drop-overlay { display: flex; }
   .toolbar .btn.big { width: 100%; }
   .parsed { flex-direction: column; }
 }
+
+/* ---------- Sources ---------- */
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row2 > label { display: flex; flex-direction: column; gap: 4px; font-weight: 500; margin-bottom: 10px; }
+.card-source { font-size: 12px; font-weight: 600; color: var(--accent-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: -2px; }
+.group-head { grid-column: 1 / -1; font-size: 15px; margin: 10px 0 -2px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.group-head:first-child { margin-top: 0; }
+@media (max-width: 760px) { .row2 { grid-template-columns: 1fr; } }

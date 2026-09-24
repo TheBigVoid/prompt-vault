@@ -123,6 +123,16 @@
   const itemsIn = (catId) =>
     [...S.items.values()].filter((i) => i.cat === catId).sort((a, b) => a.name.localeCompare(b.name));
   const loras = () => itemsIn('lora');
+  // Unique sources (series / franchise), optionally within one category
+  const sources = (catId) => {
+    const m = new Map();
+    for (const i of S.items.values()) {
+      if (!i.source || (catId && i.cat !== catId)) continue;
+      const k = i.source.toLowerCase();
+      if (!m.has(k)) m.set(k, i.source);
+    }
+    return [...m.values()].sort((a, b) => a.localeCompare(b));
+  };
 
   // ---------- Mutations ----------
   async function saveItem(it) {
@@ -261,7 +271,7 @@
   // ---------- Starter pack ----------
   const STARTER = {
     character: [
-      ['Example: Silver Knight', '1girl, solo, long silver hair, red eyes, silver plate armor, cape', 'fantasy, example'],
+      ['Example: Silver Knight', '1girl, solo, long silver hair, red eyes, silver plate armor, cape', 'fantasy, example', 'Original'],
     ],
     outfit: [
       ['Casual (random)', '{hoodie|oversized sweater|crop top|t-shirt}, {jeans|pleated skirt|shorts|cargo pants}, sneakers', 'casual, wildcard'],
@@ -335,15 +345,15 @@
   async function seedStarter() {
     const arr = [];
     for (const [catId, rows] of Object.entries(STARTER)) {
-      for (const [name, prompt, tags] of rows) {
-        arr.push({ id: uid(), cat: catId, name, prompt, negative: '', tags: PV.splitTags(tags), notes: '', image: '', fav: false, loras: [] });
+      for (const [name, prompt, tags, source = ''] of rows) {
+        arr.push({ id: uid(), cat: catId, name, source, prompt, negative: '', tags: PV.splitTags(tags), notes: '', image: '', fav: false, loras: [] });
       }
     }
     await saveItems(arr);
   }
 
   Object.assign(PV, {
-    DB, S, DEFAULT_SETTINGS, LORA_TYPES, defaultBuilder, ensureSlots, load, cat, itemsIn, loras,
+    DB, S, DEFAULT_SETTINGS, LORA_TYPES, defaultBuilder, ensureSlots, load, cat, itemsIn, loras, sources,
     saveItem, saveItems, deleteItem, saveSettings, saveBuilder, saveBuilderNow, savePreset, deletePreset,
     addHistory, deleteHistory, clearHistory, exportAll, importAll, wipeAll, seedStarter,
   });

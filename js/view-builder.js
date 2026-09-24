@@ -16,7 +16,7 @@
     const count = PV.itemsIn(c.id).length;
     const chips = items.map((it) => `
       <span class="chip" data-id="${esc(it.id)}">
-        ${thumb(it, 'mini')}<button class="chip-name" data-act="edit" data-id="${esc(it.id)}" title="${esc(it.prompt)}">${esc(it.name)}</button>
+        ${thumb(it, 'mini')}<button class="chip-name" data-act="edit" data-id="${esc(it.id)}" title="${esc((it.source ? it.source + ' · ' : '') + it.prompt)}">${esc(it.name)}</button>
         <button class="chip-x" data-act="slot-remove" data-id="${esc(it.id)}" aria-label="Remove">✕</button>
       </span>`).join('');
     return `
@@ -61,7 +61,7 @@
     root.innerHTML = `
       <div class="toolbar">
         <label class="tb-field">Base model<select class="input" data-f="baseModel">${baseOpts}</select></label>
-        <label class="tb-field grow">Random filter tags<input class="input" data-f="filterTags" value="${esc(b.filterTags)}" placeholder="e.g. fantasy, night"></label>
+        <label class="tb-field grow" title="Randomize only picks items whose tags or source match (comma separated)">Random filter (tags or source)<input class="input" data-f="filterTags" value="${esc(b.filterTags)}" placeholder="e.g. one piece, fantasy, night"></label>
         <label class="check"><input type="checkbox" data-f="favOnly" ${b.favOnly ? 'checked' : ''}> ★ favorites only</label>
         <label class="tb-field">+ random LoRAs
           <span class="inline"><select class="input" data-f="randLoraCount">${[0, 1, 2, 3].map((n) => `<option ${n === (b.randLoraCount || 0) ? 'selected' : ''}>${n}</option>`).join('')}</select>

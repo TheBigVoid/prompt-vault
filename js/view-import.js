@@ -37,6 +37,7 @@
           <p class="muted">One per line. Use <code>Name: prompt text</code>, or just the prompt text.</p>
           <div class="row">
             <select class="input" data-qcat>${cats.map((c) => `<option value="${esc(c.id)}">${esc(c.icon)} ${esc(c.name)}</option>`).join('')}</select>
+            <input class="input grow" data-qsrc placeholder="source for all (optional), e.g. One Piece">
             <input class="input grow" data-qtags placeholder="tags for all (optional)">
           </div>
           <textarea class="input mono" rows="6" data-qtext placeholder="Hands on hips: standing, hands on hips, confident&#10;Sitting on stairs: sitting on stairs, looking at viewer&#10;dynamic pose, jumping, from below"></textarea>
@@ -219,12 +220,14 @@
   async function quickAdd() {
     const catId = root.querySelector('[data-qcat]').value;
     const tags = PV.splitTags(root.querySelector('[data-qtags]').value);
+    const src = root.querySelector('[data-qsrc]').value.trim();
+    const source = PV.sources().find((x) => x.toLowerCase() === src.toLowerCase()) || src;
     const lines = root.querySelector('[data-qtext]').value.split('\n').map((l) => l.trim()).filter(Boolean);
     if (!lines.length) return toast('Nothing to add');
     const items = lines.map((line) => {
       const m = line.match(/^([^:]{1,60}):\s*(.+)$/);
       const name = m ? m[1].trim() : line.slice(0, 40) + (line.length > 40 ? '…' : '');
-      return PV.newItem(catId, { name, prompt: m ? m[2] : line, tags });
+      return PV.newItem(catId, { name, source, prompt: m ? m[2] : line, tags });
     });
     await PV.saveItems(items);
     root.querySelector('[data-qtext]').value = '';

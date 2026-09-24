@@ -32,6 +32,7 @@
       </div>
       <div class="card-body">
         <div class="card-title" title="${esc(it.name)}">${esc(it.name)}</div>
+        ${it.source ? `<div class="card-source" title="Source">${esc(it.source)}</div>` : ''}
         <div class="card-sub" title="${esc(sub)}">${esc(sub)}</div>
         <div class="card-tags">${it.cat === 'lora' ? baseBadge(it, S.builder.baseModel) : ''}${linked}${tags}</div>
       </div>
@@ -40,6 +41,12 @@
         <button class="btn sm ghost" data-act="copy" title="Copy prompt">Copy</button>
       </div>`}
     </article>`;
+  }
+
+  // Reuse the existing spelling so "one piece" and "One Piece" group together.
+  function canonicalSource(s) {
+    if (!s) return '';
+    return PV.sources().find((x) => x.toLowerCase() === s.toLowerCase()) || s;
   }
 
   // ---------- Item editor ----------
@@ -70,7 +77,12 @@
             <button type="button" class="btn sm ghost" data-rmimg ${it.image ? '' : 'hidden'}>Remove image</button>
           </div>
           <div class="ed-fields">
-            <label>Name<input class="input" name="name" value="${esc(it.name)}" required></label>
+            <div class="row2">
+              <label>Name<input class="input" name="name" value="${esc(it.name)}" required></label>
+              <label title="Series, game or franchise. Used for sorting and filtering.">Source
+                <input class="input" name="source" value="${esc(it.source || '')}" list="pv-sources" placeholder="Series / game, e.g. One Piece">
+                <datalist id="pv-sources">${PV.sources().map((s) => `<option value="${esc(s)}">`).join('')}</datalist></label>
+            </div>
             ${isLora ? `
               <label>File name <small>(as ComfyUI lists it, e.g. <code>chars\\myChar_v2.safetensors</code>)</small>
                 <input class="input mono" name="file" value="${esc(it.file || '')}"></label>
@@ -159,6 +171,7 @@
     function readForm() {
       const fd = new FormData(form);
       it.name = String(fd.get('name') || '').trim();
+      it.source = canonicalSource(String(fd.get('source') || '').trim());
       it.tags = splitTags(fd.get('tags'));
       it.notes = String(fd.get('notes') || '');
       if (isLora) {
@@ -217,6 +230,8 @@
     let q = '';
     let base = isLora ? S.builder.baseModel || '' : '';
     let favOnly = false;
+    let source = '';
+    const srcList = PV.sources(catId);
     const picked = new Set();
     const m = openModal(`
       <div class="picker">
@@ -224,6 +239,7 @@
           <h3>${esc(title || (isLora ? '🧩 Add LoRA' : `${c.icon} Pick ${c.name}`))}</h3>
           <input class="input" type="search" placeholder="Search name, prompt, tags…" data-q>
           ${isLora ? `<select class="input" data-base><option value="">All base models</option>${S.settings.baseModels.map((b) => `<option ${b === base ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select>` : ''}
+          ${srcList.length ? `<select class="input" data-src><option value="">All sources</option>${srcList.map((s) => `<option value="${esc(s)}">${esc(s)}</option>`).join('')}</select>` : ''}
           <label class="check"><input type="checkbox" data-fav> ★ only</label>
           <button class="btn" data-rand title="Pick a random one">🎲 Random</button>
           <button class="btn" data-new>＋ New</button>
@@ -239,10 +255,11 @@
       return PV.itemsIn(catId).filter((i) => {
         if (exclude.includes(i.id)) return false;
         if (favOnly && !i.fav) return false;
+        if (source && (i.source || '') !== source) return false;
         if (base && i.baseModel && PV.compatLevel(i.baseModel, base) === 0) return false;
         if (!ql) return true;
-        return [i.name, i.prompt, i.triggers, i.file, ...(i.tags || [])].join(' ').toLowerCase().includes(ql);
-      });
+        return [i.name, i.source, i.prompt, i.triggers, i.file, ...(i.tags || [])].join(' ').toLowerCase().includes(ql);
+      }).sort((a, b) => (!a.source - !b.source) || (a.source || '').localeCompare(b.source || '') || a.name.localeCompare(b.name));
     }
     function render() {
       const arr = list();
@@ -260,6 +277,8 @@
     const bs = m.el.querySelector('[data-base]');
     if (bs) bs.addEventListener('change', (e) => { base = e.target.value; render(); });
     m.el.querySelector('[data-fav]').addEventListener('change', (e) => { favOnly = e.target.checked; render(); });
+    const ss = m.el.querySelector('[data-src]');
+    if (ss) ss.addEventListener('change', (e) => { source = e.target.value; render(); });
     m.el.querySelector('[data-rand]').addEventListener('click', () => {
       const arr = list().filter((i) => !picked.has(i.id));
       if (!arr.length) return toast('Nothing to pick from');

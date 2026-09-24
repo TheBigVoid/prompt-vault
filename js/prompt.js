@@ -112,13 +112,16 @@
     return it.loras.every((l) => { const li = S.items.get(l.id); return !li || compatLevel(li.baseModel, base) > 0; });
   }
 
+  // Filter words match an item's tags or its source ("one piece").
+  const matchesFilter = (i, words) => (i.tags || []).some((t) => words.includes(t)) || words.includes((i.source || '').toLowerCase());
+
   // Filters are "soft": if a filter would leave nothing, it's ignored for that slot.
   function candidates(catId, b = S.builder) {
     let pool = PV.itemsIn(catId);
     const soft = (fn) => { const f = pool.filter(fn); if (f.length) pool = f; };
     if (b.favOnly) soft((i) => i.fav);
     const tags = splitTags(b.filterTags);
-    if (tags.length) soft((i) => (i.tags || []).some((t) => tags.includes(t)));
+    if (tags.length) soft((i) => matchesFilter(i, tags));
     if (b.baseModel) soft((i) => itemCompat(i, b.baseModel));
     return pool;
   }
@@ -142,7 +145,7 @@
     if (type) pool = pool.filter((l) => l.loraType === type);
     if (b.favOnly) { const f = pool.filter((l) => l.fav); if (f.length) pool = f; }
     const tags = splitTags(b.filterTags);
-    if (tags.length) { const f = pool.filter((l) => (l.tags || []).some((t) => tags.includes(t))); if (f.length) pool = f; }
+    if (tags.length) { const f = pool.filter((l) => matchesFilter(l, tags)); if (f.length) pool = f; }
     if (b.baseModel) {
       const exact = pool.filter((l) => compatLevel(l.baseModel, b.baseModel) === 2);
       pool = exact.length ? exact : pool.filter((l) => compatLevel(l.baseModel, b.baseModel) === 1);

@@ -30,6 +30,7 @@ It's one static web page with no server, no account and no build step. Your libr
 
 ### 📚 Library
 - Cards with preview images. Drop an image, paste one with Ctrl+V, or click to choose one.
+- **Source** for every item (e.g. Nami → *One Piece*). Filter by source, or sort **By source** to see your library grouped by series. The Builder's random filter matches sources too, so typing `one piece` rolls only One Piece characters.
 - Search, tags, favorites, and sorting by name, newest or most used.
 
 ### 📥 Import
