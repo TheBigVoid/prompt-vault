@@ -82,6 +82,34 @@ window.PV = window.PV || {};
     return d;
   }
 
+  // ---------- Drag & drop images (files, or images dragged out of a web page) ----------
+  const isImageFile = (f) => !!f && (String(f.type).startsWith('image/') || /\.(png|jpe?g|webp|gif|bmp|avif)$/i.test(f.name || ''));
+  const dragHasImage = (e) => {
+    const t = [...((e.dataTransfer && e.dataTransfer.types) || [])];
+    return t.includes('Files') || t.includes('text/uri-list') || t.includes('text/html');
+  };
+
+  // Must be called synchronously inside the drop event (the data is gone after an await).
+  function imageFromDrop(dt) {
+    const f = [...(dt.files || [])].find(isImageFile);
+    if (f) return Promise.resolve(f);
+    const html = dt.getData('text/html') || '';
+    const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+    const uri = (dt.getData('text/uri-list') || '').split(/\r?\n/).find((u) => /^https?:/i.test(u.trim()));
+    const src = m ? m[1].replace(/&amp;/g, '&') : uri;
+    if (!src) return Promise.resolve(null);
+    return fetch(src.trim())
+      .then((r) => (r.ok ? r.blob() : null))
+      .then((b) => {
+        if (b && b.type.startsWith('image/')) return b;
+        throw new Error('not an image');
+      })
+      .catch(() => {
+        toast("Couldn't grab that image from the web page. Save it to your PC first, then drag the file in.", 'err', 5000);
+        return null;
+      });
+  }
+
   // ---------- Modals ----------
   function openModal(html, { wide = false, dismissable = true, onClose } = {}) {
     const root = $('#modal-root');
@@ -166,6 +194,6 @@ window.PV = window.PV || {};
 
   Object.assign(PV, {
     $, $$, esc, uid, debounce, splitTags, pick, fmtW, slug, stem, timeAgo, rng, newSeed,
-    toast, copyText, download, fileToThumb, openModal, confirmBox, promptBox, normBase, compatLevel,
+    toast, copyText, download, fileToThumb, isImageFile, dragHasImage, imageFromDrop, openModal, confirmBox, promptBox, normBase, compatLevel,
   });
 })(window.PV);

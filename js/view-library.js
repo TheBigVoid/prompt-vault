@@ -136,9 +136,54 @@
     }
   }
 
+  // ---------- Drag images in (e.g. from Pinterest) ----------
+  // Onto a card: sets its picture. Onto empty space: new item in this category.
+  let highlighted = null;
+  function highlight(el) {
+    if (highlighted === el) return;
+    if (highlighted) highlighted.classList.remove('drop-target');
+    highlighted = el;
+    if (el) el.classList.add('drop-target');
+  }
+  const dropTarget = (e) => e.target.closest('.card') || e.target.closest('.lib-main');
+
+  function onDragOver(e) {
+    if (!PV.dragHasImage(e) || !dropTarget(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'copy';
+    const t = dropTarget(e);
+    highlight(t.classList.contains('card') ? t : root.querySelector('[data-grid]'));
+  }
+
+  async function onDrop(e) {
+    const t = dropTarget(e);
+    if (!t) return;
+    e.preventDefault();
+    e.stopPropagation();
+    highlight(null);
+    const blob = await PV.imageFromDrop(e.dataTransfer);
+    if (!blob) return;
+    let image;
+    try { image = await PV.fileToThumb(blob); } catch (err) { toast('Could not read that image', 'err'); return; }
+    if (t.classList.contains('card')) {
+      const it = S.items.get(t.dataset.id);
+      it.image = image;
+      await PV.saveItem(it);
+      toast(`Picture set for "${it.name}"`, 'ok');
+      render();
+    } else {
+      const catId = st.cat.startsWith('__') ? S.settings.categories[0]?.id || 'character' : st.cat;
+      PV.editItem(PV.newItem(catId, { image, source: st.source || '' }), { isNew: true });
+    }
+  }
+
   function mount(el) {
     root = el;
     root.addEventListener('click', onClick);
+    root.addEventListener('dragover', onDragOver);
+    root.addEventListener('dragleave', (e) => { if (!root.contains(e.relatedTarget)) highlight(null); });
+    root.addEventListener('drop', onDrop);
     root.addEventListener('keydown', (e) => {
       const c = e.target.closest('.card');
       if (c && e.key === 'Enter' && e.target === c) PV.editItem(S.items.get(c.dataset.id));

@@ -26,7 +26,7 @@
 
         <section class="panel">
           <div class="panel-head"><h3>🖼 Read prompts from ComfyUI images</h3></div>
-          <p class="muted">Drop PNGs saved by ComfyUI (or A1111/Forge) to pull out the prompt, negative and LoRAs used. You can drop them anywhere in the app.</p>
+          <p class="muted">Drop PNGs saved by ComfyUI (or A1111/Forge) to pull out the prompt, negative and LoRAs used.</p>
           <div class="drop big" data-imgdrop tabindex="0">Drop images here or click to choose</div>
           <input type="file" accept="image/png" multiple hidden data-imgfiles>
           <div data-parsed>${renderParsed()}</div>
@@ -274,6 +274,24 @@
         const i = e.target.closest('.parsed').dataset.i;
         onParsedAction(act, parsed[i]);
       }
+    });
+    const zone = (e) => e.target.closest('[data-imgdrop]');
+    el.addEventListener('dragover', (e) => {
+      const z = zone(e);
+      if (!z || !PV.dragHasImage(e)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = 'copy';
+      z.classList.add('over');
+    });
+    el.addEventListener('dragleave', (e) => { const z = zone(e); if (z && !z.contains(e.relatedTarget)) z.classList.remove('over'); });
+    el.addEventListener('drop', (e) => {
+      const z = zone(e);
+      if (!z) return;
+      e.preventDefault();
+      e.stopPropagation();
+      z.classList.remove('over');
+      onImages(e.dataTransfer.files);
     });
     el.addEventListener('keydown', (e) => {
       if (e.target.matches('[data-imgdrop]') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); el.querySelector('[data-imgfiles]').click(); }

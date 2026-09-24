@@ -24,19 +24,22 @@ It's one static web page with no server, no account and no build step. Your libr
 - Compatibility warnings when a LoRA doesn't match the chosen base model.
 - Output for **ComfyUI loader nodes** (trigger words in the prompt and a separate LoRA list), or as `<lora:name:weight>` tags for Lora Tag Loader, Impact Pack or A1111.
 
+### 🎲 Random character
+- The **Random character** button in the top bar (or press `C`) shows a random character with their picture and a ready-to-copy prompt, including their linked LoRAs' trigger words. Press Space for another one. You can limit it to one source or to favorites, and send the result to the Builder.
+
 ### 🔀 Wildcards
 - `{red|blue|green}` picks one option at random, and nesting works.
 - `__pose__` inserts a random item from the **Poses** category. Any category ID works.
 - 🔀 **Re-roll wildcards** gives new picks without changing the slots. You can also leave `{a|b}` unresolved so ComfyUI picks at queue time.
 
 ### 📚 Library
-- Cards with preview images. Drop an image, paste one with Ctrl+V, or click to choose one.
+- Cards with preview images. Drop an image, paste one with Ctrl+V, or click to choose one. You can drag images straight from a web page (e.g. Pinterest): drop one on a card to set its picture, or on empty space to start a new item with it.
 - **Source** for every item (e.g. Nami → *One Piece*). Filter by source, or sort **By source** to see your library grouped by series. The Builder's random filter matches sources too, so typing `one piece` rolls only One Piece characters.
 - Search, tags, favorites, and sorting by name, newest or most used.
 
 ### 📥 Import
 - **Scan your LoRA folder.** It reads names, trigger words, base model and preview images from the **Stability Matrix** (`.cm-info.json` + `.preview.*`), **CivitAI Helper** (`.civitai.info`) and **A1111** (`.json`) files next to your models. Model files themselves are never read or uploaded.
-- **Read prompts from ComfyUI PNGs.** Drop a generated image anywhere in the app to pull out the positive and negative prompts, LoRAs and weights (LoraLoader, rgthree Power Lora Loader, `<lora:>` tags) and the checkpoint. A1111/Forge PNGs work too.
+- **Read prompts from ComfyUI PNGs.** Drop a generated image on the Import tab's box to pull out the positive and negative prompts, LoRAs and weights (LoraLoader, rgthree Power Lora Loader, `<lora:>` tags) and the checkpoint. A1111/Forge PNGs work too.
 - **Quick add** many items at once, one per line.
 - **Backup / restore** everything as a single `.json` file.
 

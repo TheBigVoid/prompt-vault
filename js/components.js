@@ -124,7 +124,7 @@
     const rm = el.querySelector('[data-rmimg]');
 
     async function setImage(file) {
-      if (!file || !file.type.startsWith('image/')) return;
+      if (!file || !PV.isImageFile(file)) return;
       try {
         it.image = await fileToThumb(file);
         drop.innerHTML = `<img src="${esc(it.image)}" alt="">`;
@@ -134,11 +134,22 @@
     drop.addEventListener('click', () => fileIn.click());
     drop.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileIn.click(); } });
     fileIn.addEventListener('change', () => setImage(fileIn.files[0]));
-    drop.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); drop.classList.add('over'); });
+    drop.addEventListener('dragover', (e) => {
+      if (!PV.dragHasImage(e)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = 'copy';
+      drop.classList.add('over');
+    });
     drop.addEventListener('dragleave', () => drop.classList.remove('over'));
-    drop.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); drop.classList.remove('over'); setImage(e.dataTransfer.files[0]); });
+    drop.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      drop.classList.remove('over');
+      setImage(await PV.imageFromDrop(e.dataTransfer));
+    });
     el.addEventListener('paste', (e) => {
-      const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/'));
+      const f = [...(e.clipboardData?.files || [])].find(PV.isImageFile);
       if (f) { e.preventDefault(); setImage(f); }
     });
     rm.addEventListener('click', () => { it.image = ''; drop.innerHTML = '<span>Drop, paste (Ctrl+V)<br>or click to add image</span>'; rm.hidden = true; });

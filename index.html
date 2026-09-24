@@ -19,6 +19,7 @@
       <a href="#import">Import</a>
       <a href="#settings">Settings</a>
     </nav>
+    <button class="btn primary sm" id="rand-char" title="Random character (shortcut: C)">🎲 <span>Random character</span></button>
     <button class="icon-btn" id="theme-toggle" title="Toggle light/dark" aria-label="Toggle theme">◐</button>
   </header>
 
@@ -33,7 +34,6 @@
 
   <div id="modal-root"></div>
   <div id="toasts" aria-live="polite"></div>
-  <div class="drop-overlay" aria-hidden="true"><div>Drop ComfyUI images to read their prompts</div></div>
 
   <script src="js/util.js"></script>
   <script src="js/store.js"></script>
@@ -45,6 +45,7 @@
   <script src="js/view-saved.js"></script>
   <script src="js/view-import.js"></script>
   <script src="js/view-settings.js"></script>
+  <script src="js/random-character.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

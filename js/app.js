@@ -57,25 +57,19 @@
       if (isTyping(e) || e.ctrlKey || e.metaKey || e.altKey) return;
       if (document.querySelector('.modal-backdrop')) return;
       if ((e.key === 'r' || e.key === 'R') && current === 'builder') { e.preventDefault(); PV.builderView.randomize(); }
+      if (e.key === 'c' || e.key === 'C') { e.preventDefault(); PV.randomCharacter(); }
     });
 
-    // Drop a ComfyUI PNG anywhere -> read its prompt on the Import tab.
-    let dragDepth = 0;
-    const hasFiles = (e) => [...(e.dataTransfer?.types || [])].includes('Files');
-    window.addEventListener('dragenter', (e) => { if (hasFiles(e)) { dragDepth++; document.body.classList.add('dragging'); } });
-    window.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) document.body.classList.remove('dragging'); });
-    window.addEventListener('dragover', (e) => { if (hasFiles(e)) e.preventDefault(); });
-    window.addEventListener('drop', (e) => {
-      if (!hasFiles(e)) return;
+    // Drop zones (image pickers, library cards, Import box) handle their own drops.
+    // Anything dropped elsewhere is ignored instead of the page opening the file.
+    window.addEventListener('dragover', (e) => {
+      if (!PV.dragHasImage(e)) return;
       e.preventDefault();
-      dragDepth = 0;
-      document.body.classList.remove('dragging');
-      if (document.querySelector('.modal-backdrop')) return;
-      const files = [...e.dataTransfer.files].filter((f) => f.type.startsWith('image/'));
-      if (!files.length) return;
-      if (current !== 'import') { location.hash = '#import'; route(); }
-      PV.importView.onImages(files);
+      e.dataTransfer.dropEffect = 'none';
     });
+    window.addEventListener('drop', (e) => { if (PV.dragHasImage(e)) e.preventDefault(); });
+
+    $('#rand-char').addEventListener('click', () => PV.randomCharacter());
 
     $('#theme-toggle').addEventListener('click', () => {
       const dark = document.documentElement.getAttribute('data-theme') === 'dark' ||
