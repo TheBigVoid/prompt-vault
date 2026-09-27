@@ -216,10 +216,14 @@
   }
 
   // ---------- Backup ----------
+  const BACKUP_VERSION = 1;
+  // Merge keeps whichever copy was edited last, so an old backup can't undo newer edits.
+  const isNewer = (incoming, current) => !current || (incoming.updated || 0) >= (current.updated || 0);
+
   function exportAll() {
     return JSON.stringify({
       app: 'prompt-vault',
-      version: 1,
+      version: BACKUP_VERSION,
       exported: new Date().toISOString(),
       settings: S.settings,
       builder: S.builder,
@@ -231,6 +235,7 @@
 
   async function importAll(data, mode = 'merge') {
     if (!data || data.app !== 'prompt-vault') throw new Error('Not a Prompt Vault backup file');
+    if ((Number(data.version) || 1) > BACKUP_VERSION) throw new Error('This backup is from a newer version of Prompt Vault. Update the app first.');
     if (mode === 'replace') {
       await Promise.all(['items', 'presets', 'history'].map((s) => DB.clear(s)));
       S.items.clear();
@@ -249,10 +254,12 @@
       }
     }
     await saveSettings();
-    const items = data.items || [];
+    const allItems = (data.items || []).filter((i) => i && i.id);
+    const items = allItems.filter((i) => isNewer(i, S.items.get(i.id)));
     items.forEach((i) => S.items.set(i.id, i));
     await DB.putMany('items', items);
-    const presets = data.presets || [];
+    const allPresets = (data.presets || []).filter((p) => p && p.id);
+    const presets = allPresets.filter((p) => isNewer(p, S.presets.find((x) => x.id === p.id)));
     await DB.putMany('presets', presets);
     S.presets = [...presets, ...S.presets.filter((p) => !presets.some((x) => x.id === p.id))].sort((a, b) => b.updated - a.updated);
     const hist = data.history || [];
@@ -261,7 +268,9 @@
     if (mode === 'replace' && data.builder) S.builder = { ...defaultBuilder(), ...data.builder };
     ensureSlots(S.builder);
     await saveBuilderNow();
-    return { items: items.length, presets: presets.length, history: hist.length };
+    // skipped = backup entries older than the copy already in the library
+    const skipped = allItems.length - items.length + allPresets.length - presets.length;
+    return { items: items.length, presets: presets.length, history: hist.length, skipped };
   }
 
   async function wipeAll() {
