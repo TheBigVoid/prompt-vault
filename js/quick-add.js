@@ -35,10 +35,13 @@
     return { name: titleCase(name), source: source ? canonical(titleCase(source)) : '' };
   }
 
-  function findExisting(name, prompt) {
+  // Same name *and* source, or the exact same prompt. Name alone isn't enough: "Saber (Fate)" and "Saber (other)" are both "Saber".
+  function findExisting(name, source, prompt) {
     const n = name.toLowerCase();
+    const s = String(source || '').toLowerCase();
     const p = String(prompt).trim().toLowerCase();
-    return PV.itemsIn('character').find((c) => c.name.toLowerCase() === n || (c.prompt || '').trim().toLowerCase() === p);
+    return PV.itemsIn('character').find((c) =>
+      (c.name.toLowerCase() === n && (c.source || '').toLowerCase() === s) || (c.prompt || '').trim().toLowerCase() === p);
   }
 
   // Called by the desktop Quick add window (and the web paste box). Returns 'added' | 'exists' | 'error'.
@@ -47,7 +50,7 @@
       prompt = String(prompt || '').trim();
       if (!name || !prompt) return 'error';
       const g = guessCharacter(name, prompt);
-      const existing = findExisting(g.name, prompt);
+      const existing = findExisting(g.name, g.source, prompt);
       if (existing) {
         toast(`${existing.name} is already in your library`);
         return 'exists';
@@ -100,9 +103,9 @@
       const prompt = $('[data-tags]').value.trim();
       const name = $('[data-name]').value.trim();
       if (!prompt || !name) return toast('Paste the prompt tags first', 'err');
-      const existing = findExisting(name, prompt);
-      if (existing) return toast(`${existing.name} is already in your library`);
       const src = $('[data-source]').value.trim();
+      const existing = findExisting(name, src, prompt);
+      if (existing) return toast(`${existing.name} is already in your library`);
       await PV.saveItem(PV.newItem('character', { name, source: src ? canonical(src) : '', prompt, notes: 'Quick added from downloadmost.com' }));
       PV.emit('data');
       toast(`Added ${name}`, 'ok');
