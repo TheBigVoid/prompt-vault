@@ -14,9 +14,12 @@
   function render() {
     const cats = S.settings.categories;
     root.innerHTML = `
+      <header class="page-head">
+        <div><h1>Import</h1><p class="sub">Bring in LoRAs, prompts from images, lists of items and backups.</p></div>
+      </header>
       <div class="import">
         <section class="panel">
-          <div class="panel-head"><h3>🧩 Scan your LoRA folder</h3></div>
+          <div class="panel-head"><h3>${PV.icon('folder', 18)} Scan your LoRA folder</h3></div>
           <p class="muted">Pick the folder with your LoRAs. Only file names and the small info/preview files next to them are read. Your models stay where they are and aren't uploaded anywhere.
             Trigger words, base model and preview images come from Stability Matrix (<code>.cm-info.json</code>), CivitAI Helper (<code>.civitai.info</code>) or A1111 (<code>.json</code>) sidecar files.</p>
           <p class="muted small">Stability Matrix's folder is usually <code>StabilityMatrix\\Data\\Models\\Lora</code> (or <code>%APPDATA%\\StabilityMatrix\\Models\\Lora</code>). If the browser asks to "upload" the files, that just means letting this page read them.</p>
@@ -25,7 +28,7 @@
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h3>🖼 Read prompts from ComfyUI images</h3></div>
+          <div class="panel-head"><h3>${PV.icon('image', 18)} Read prompts from ComfyUI images</h3></div>
           <p class="muted">Drop PNGs saved by ComfyUI (or A1111/Forge) to pull out the prompt, negative and LoRAs used.</p>
           <div class="drop big" data-imgdrop tabindex="0">Drop images here or click to choose</div>
           <input type="file" accept="image/png" multiple hidden data-imgfiles>
@@ -33,7 +36,7 @@
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h3>⚡ Quick add (bulk)</h3></div>
+          <div class="panel-head"><h3>${PV.icon('zap', 18)} Quick add (bulk)</h3></div>
           <p class="muted">One per line. Use <code>Name: prompt text</code>, or just the prompt text.</p>
           <div class="row">
             <select class="input" data-qcat>${cats.map((c) => `<option value="${esc(c.id)}">${esc(c.icon)} ${esc(c.name)}</option>`).join('')}</select>
@@ -45,7 +48,7 @@
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h3>💾 Backup & restore</h3></div>
+          <div class="panel-head"><h3>${PV.icon('save', 18)} Backup & restore</h3></div>
           <p class="muted">Your library lives in this browser only. Export a backup now and then, and use it to move your library to another browser or PC.
             The local file and the GitHub Pages site have <b>separate</b> libraries, so use export/import to move between them.</p>
           <div class="row">

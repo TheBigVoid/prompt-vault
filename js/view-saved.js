@@ -2,6 +2,7 @@
 // Presets (saved builder setups) and History (everything you copied).
 (function (PV) {
   const { S, esc, toast, copyText, confirmBox, timeAgo, fmtW } = PV;
+  const ic = (n, z) => PV.icon(n, z);
 
   // ---------- Presets ----------
   let pRoot;
@@ -11,29 +12,27 @@
     const q = pq.toLowerCase();
     const list = S.presets.filter((p) => !q || (p.name + ' ' + (p.positive || '')).toLowerCase().includes(q));
     pRoot.innerHTML = `
-      <div class="toolbar">
-        <h2 class="tb-title">Presets <small class="muted">${S.presets.length}</small></h2>
-        <input class="input grow" type="search" placeholder="Search presets…" data-q value="${esc(pq)}">
-        <button class="btn" data-act="rand-preset" ${S.presets.length ? '' : 'disabled'}>🎲 Random preset</button>
-      </div>
-      <p class="muted small">A preset saves the whole builder (slots, locks, LoRAs, extra text). Save one from the Builder with 💾.</p>
+      <header class="page-head">
+        <div><h1>Presets</h1><p class="sub">Saved Builder setups: slots, outfits, locks, LoRAs and text. Save one with the bookmark button in the Builder.</p></div>
+        <div class="page-actions"><button class="btn grad" data-act="rand-preset" ${S.presets.length ? '' : 'disabled'}>${ic('dice', 16)} Random preset</button></div>
+      </header>
+      <div class="toolbar"><div class="search-field">${ic('search', 16)}<input class="input" type="search" placeholder="Search presets…" data-q value="${esc(pq)}"></div></div>
       <div class="grid presets">
         ${list.map((p) => `
           <article class="card preset" data-id="${esc(p.id)}">
-            <div class="card-media">${p.image ? `<img class="thumb" src="${esc(p.image)}" alt="">` : '<div class="thumb ph">💾</div>'}</div>
+            <div class="card-media">${PV.thumb({ name: p.name, image: p.image, cat: 'style' })}
+              <div class="card-overlay"><div class="card-title">${esc(p.name)}</div><div class="card-source">${esc(timeAgo(p.updated))}</div></div></div>
             <div class="card-body">
-              <div class="card-title">${esc(p.name)}</div>
               <div class="card-sub clamp3">${esc(p.positive || '')}</div>
-              <div class="muted small">${esc(timeAgo(p.updated))}</div>
             </div>
-            <div class="card-actions">
-              <button class="btn sm primary" data-act="load">Load</button>
-              <button class="btn sm ghost" data-act="copy">Copy</button>
-              <button class="btn sm ghost" data-act="img" title="Set image">🖼</button>
-              <button class="btn sm ghost" data-act="rename">Rename</button>
-              <button class="btn sm ghost danger" data-act="del">Delete</button>
+            <div class="preset-actions">
+              <button class="btn sm grad" data-act="load">${ic('arrow', 14)} Load</button>
+              <button class="btn sm" data-act="copy" title="Copy prompt">${ic('copy', 14)}</button>
+              <button class="btn sm ghost" data-act="img" title="Set image">${ic('image', 14)}</button>
+              <button class="btn sm ghost" data-act="rename" title="Rename">${ic('pencil', 14)}</button>
+              <button class="btn sm ghost danger" data-act="del" title="Delete">${ic('trash', 14)}</button>
             </div>
-          </article>`).join('') || '<div class="empty">No presets yet.</div>'}
+          </article>`).join('') || `<div class="empty">${ic('bookmark', 28)}No presets yet. Build something you like, then save it from the Builder.</div>`}
       </div>
       <input type="file" accept="image/*" hidden data-imgfile>`;
   }
@@ -101,24 +100,24 @@
     const q = hq.toLowerCase();
     const list = S.history.filter((h) => !q || (h.positive + ' ' + h.negative).toLowerCase().includes(q)).slice(0, 150);
     hRoot.innerHTML = `
-      <div class="toolbar">
-        <h2 class="tb-title">History <small class="muted">${S.history.length}</small></h2>
-        <input class="input grow" type="search" placeholder="Search history…" data-q value="${esc(hq)}">
-        <button class="btn ghost danger" data-act="clear" ${S.history.length ? '' : 'disabled'}>Clear history</button>
-      </div>
-      <p class="muted small">Every time you copy a prompt from the Builder it's logged here (last 300).</p>
+      <header class="page-head">
+        <div><h1>History</h1><p class="sub">Every prompt you copy is saved here (last 300).</p></div>
+        <div class="page-actions"><button class="btn ghost danger" data-act="clear" ${S.history.length ? '' : 'disabled'}>${ic('trash', 16)} Clear history</button></div>
+      </header>
+      <div class="toolbar"><div class="search-field">${ic('search', 16)}<input class="input" type="search" placeholder="Search history…" data-q value="${esc(hq)}"></div></div>
       <div class="hist">
         ${list.map((h) => `
           <div class="hist-row" data-id="${esc(h.id)}">
-            <div class="hist-meta muted small">${esc(timeAgo(h.time))}${h.loras && h.loras.length ? ' · 🧩 ' + h.loras.map((l) => esc(l.name) + ' ' + esc(fmtW(l.weight))).join(', ') : ''}</div>
+            <div class="hist-meta muted small">${esc(timeAgo(h.time))}${h.loras && h.loras.length ? ' · LoRAs: ' + h.loras.map((l) => esc(l.name) + ' ' + esc(fmtW(l.weight))).join(', ') : ''}</div>
             <div class="hist-pos">${esc(h.positive)}</div>
             ${h.negative ? `<div class="hist-neg">${esc(h.negative)}</div>` : ''}
             <div class="hist-actions">
-              <button class="btn sm" data-act="copy">Copy</button>
-              ${h.snapshot ? '<button class="btn sm" data-act="restore">Open in Builder</button><button class="btn sm ghost" data-act="preset">Save as preset</button>' : ''}
-              <button class="btn sm ghost danger" data-act="del">✕</button>
+              <button class="btn sm" data-act="copy">${ic('copy', 14)} Copy</button>
+              ${h.snapshot ? `<button class="btn sm" data-act="restore">${ic('wand', 14)} Open in Builder</button><button class="btn sm ghost" data-act="preset">${ic('bookmark', 14)} Save as preset</button>` : ''}
+              <span class="spacer"></span>
+              <button class="btn sm ghost danger" data-act="del" title="Delete">${ic('trash', 14)}</button>
             </div>
-          </div>`).join('') || '<div class="empty">Nothing yet.</div>'}
+          </div>`).join('') || `<div class="empty">${ic('history', 28)}Nothing yet. Prompts you copy from the Builder show up here.</div>`}
       </div>`;
   }
 

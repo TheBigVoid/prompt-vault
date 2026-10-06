@@ -36,7 +36,9 @@ window.PV = window.PV || {};
   function toast(msg, type = 'info', ms = 2600) {
     const el = document.createElement('div');
     el.className = 'toast ' + type;
-    el.textContent = msg;
+    const ic = type === 'ok' ? 'check' : type === 'err' ? 'alert' : 'info';
+    el.innerHTML = (PV.icon ? PV.icon(ic, 17) : '') + '<span></span>';
+    el.lastChild.textContent = msg;
     $('#toasts').appendChild(el);
     setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, ms);
   }
@@ -231,13 +233,37 @@ window.PV = window.PV || {};
     return 0;
   }
 
+  // ---------- Category colors ----------
+  const CAT_COLORS = {
+    character: '#a78bfa', outfit: '#f472b6', pose: '#60a5fa', expression: '#fbbf24', scene: '#34d399',
+    camera: '#22d3ee', lighting: '#fb923c', style: '#c084fc', negative: '#f87171', lora: '#2dd4bf',
+    prefix: '#8a8a9e', suffix: '#8a8a9e',
+  };
+  const EXTRA_COLORS = ['#a3e635', '#e879f9', '#38bdf8', '#facc15', '#4ade80', '#fb7185', '#818cf8', '#2dd4bf'];
+  function catColor(id) {
+    if (CAT_COLORS[id]) return CAT_COLORS[id];
+    let h = 0;
+    for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    return EXTRA_COLORS[h % EXTRA_COLORS.length];
+  }
+  // Initials for image placeholders: "Hatsune Miku" -> "HM"
+  const initials = (name) => String(name || '?').replace(/\(.*?\)/g, '').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+
+  // Replace <x data-i="name"> markers in static HTML with icons (prepended).
+  function hydrateIcons(root = document) {
+    root.querySelectorAll('[data-i]').forEach((el) => {
+      if (el.querySelector(':scope > svg.ico')) return;
+      el.insertAdjacentHTML('afterbegin', PV.icon(el.dataset.i, 18));
+    });
+  }
+
   // Tiny event bus
   const listeners = {};
   PV.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
   PV.emit = (ev, ...a) => (listeners[ev] || []).forEach((fn) => fn(...a));
 
   Object.assign(PV, {
-    $, $$, esc, uid, debounce, splitTags, pick, fmtW, slug, stem, timeAgo, rng, newSeed,
+    catColor, initials, hydrateIcons, $, $$, esc, uid, debounce, splitTags, pick, fmtW, slug, stem, timeAgo, rng, newSeed,
     IMAGE_SEARCH_SITES, openImageSearch, receiveSearchImage, toast, copyText, download, fileToThumb, isImageFile, dragHasImage, imageFromDrop, openModal, confirmBox, promptBox, normBase, compatLevel,
   });
 })(window.PV);

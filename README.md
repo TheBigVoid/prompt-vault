@@ -12,6 +12,15 @@ It's one static web page with no server, no account and no build step. Your libr
 
 ## Features
 
+### 👗 Outfits per character
+- Give a character several **outfits** (e.g. Nami → *Classic*, *Film Red*, *Wano*), each with its own prompt, an optional picture and an optional outfit LoRA.
+- Keep identity tags (hair, eyes) in the character prompt and clothes in the outfits.
+- In the Builder, pick an outfit with the chips on the character card. **Randomize** rolls a new outfit even when the character is locked; lock the outfit to keep it too.
+- While a character wears one of their outfits, Randomize leaves the generic Outfit slot empty so you don't get two outfits.
+
+### ⌨️ Quick search
+Press **Ctrl+K** to find any character, outfit, LoRA or preset and add it to the Builder (Enter) or edit it (Shift+Enter), or to run actions like Randomize and Export backup.
+
 ### 🧱 Builder
 - One **slot per category** (Characters, Outfits, Poses, Expressions, Scenes, Camera, Lighting, Styles, Negatives). You can add, rename and reorder categories.
 - **🎲 Randomize all** (or press `R`). Each slot has:
@@ -22,6 +31,7 @@ It's one static web page with no server, no account and no build step. Your libr
 - **LoRA stack** with weight sliders, on/off toggles and locks. It can also add *N random LoRAs of a type*, for example one random style LoRA per roll.
 - **Linked LoRAs:** attach a LoRA to a character (or any item). Picking the character loads its LoRA at the right weight.
 - Compatibility warnings when a LoRA doesn't match the chosen base model.
+- Color-coded prompt preview shows which part came from which slot, with a rough token count.
 - Output for **ComfyUI loader nodes** (trigger words in the prompt and a separate LoRA list), or as `<lora:name:weight>` tags for Lora Tag Loader, Impact Pack or A1111.
 
 ### 🎲 Random character
@@ -97,6 +107,10 @@ Then open http://localhost:8765.
 | `js/meta.js` | PNG metadata reader (ComfyUI / A1111), LoRA folder scanner |
 | `js/components.js` | cards, item editor, picker |
 | `js/view-*.js` | the six screens |
+| `js/palette.js` | Ctrl+K quick search |
+| `js/icons.js` | Lucide icons (ISC) |
+
+Font: [Inter](https://rsms.me/inter/) (SIL Open Font License, see `fonts/Inter-LICENSE.txt`).
 
 ## License
 

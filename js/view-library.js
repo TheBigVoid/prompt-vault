@@ -23,7 +23,7 @@
       if (st.base && i.cat === 'lora' && i.baseModel !== st.base) return false;
       if (st.source && (i.source || '') !== st.source) return false;
       if (!q) return true;
-      return [i.name, i.source, i.prompt, i.triggers, i.file, i.notes, ...(i.tags || [])].join(' ').toLowerCase().includes(q);
+      return [i.name, i.source, i.prompt, i.triggers, i.file, i.notes, ...(i.tags || []), ...PV.variantsOf(i).map((v) => v.name)].join(' ').toLowerCase().includes(q);
     });
     const sorters = {
       name: (a, b) => a.name.localeCompare(b.name),
@@ -53,9 +53,10 @@
     return out;
   }
 
-  function sideBtn(id, icon, name, count) {
-    return `<button class="side-btn ${st.cat === id ? 'on' : ''}" data-cat="${esc(id)}"><span>${esc(icon)} ${esc(name)}</span><small>${count}</small></button>`;
+  function sideBtn(id, name, count, lead) {
+    return `<button class="side-btn ${st.cat === id ? 'on' : ''}" data-cat="${esc(id)}"><span>${lead}${esc(name)}</span><small>${count}</small></button>`;
   }
+  const dot = (id) => `<span class="dot" style="--c:${PV.catColor(id)}"></span>`;
 
   function render() {
     if (st.cat !== '__all' && st.cat !== '__fav' && st.cat !== 'lora' && !PV.cat(st.cat)) st.cat = S.settings.categories[0]?.id || 'lora';
@@ -63,41 +64,47 @@
     const cnt = (id) => all.filter((i) => i.cat === id).length;
     const tagCounts = {};
     pool().forEach((i) => (i.tags || []).forEach((t) => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
-    const tags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 40);
+    const tags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 30);
     const list = filtered();
     const srcList = PV.sources(st.cat.startsWith('__') ? '' : st.cat);
     if (st.source && !srcList.includes(st.source)) st.source = '';
     const isLoraCat = st.cat === 'lora';
     const canAdd = st.cat !== '__all' && st.cat !== '__fav';
     const title = st.cat === '__all' ? 'Everything' : st.cat === '__fav' ? 'Favorites' : isLoraCat ? 'LoRAs' : PV.cat(st.cat).name;
+    const ic = (n, z) => PV.icon(n, z);
 
     root.innerHTML = `
+      <header class="page-head">
+        <div><h1>${esc(title)}</h1><p class="sub">${list.length} ${list.length === 1 ? 'item' : 'items'}${st.q || st.tag || st.source ? ' match' : ''}. Drop an image on a card to set its picture.</p></div>
+        <div class="page-actions">
+          ${st.cat === 'character' && S.settings.quickAdd ? `<button class="btn" data-act="quick-add" title="Add characters from the Danbooru character list (experimental)">${ic('zap', 16)} Quick add</button>` : ''}
+          ${canAdd ? `<button class="btn primary" data-act="new">${ic('plus', 16)} New ${isLoraCat ? 'LoRA' : esc(title.toLowerCase().replace(/s$/, ''))}</button>` : ''}
+        </div>
+      </header>
       <div class="lib">
         <nav class="lib-side" aria-label="Categories">
-          ${sideBtn('__all', '📚', 'Everything', all.length)}
-          ${sideBtn('__fav', '★', 'Favorites', all.filter((i) => i.fav).length)}
+          ${sideBtn('__all', 'Everything', all.length, ic('library', 16))}
+          ${sideBtn('__fav', 'Favorites', all.filter((i) => i.fav).length, ic('star', 16))}
+          <div class="side-label">Categories</div>
+          ${S.settings.categories.map((c) => sideBtn(c.id, c.name, cnt(c.id), dot(c.id))).join('')}
           <div class="side-sep"></div>
-          ${sideBtn('lora', '🧩', 'LoRAs', cnt('lora'))}
-          ${S.settings.categories.map((c) => sideBtn(c.id, c.icon, c.name, cnt(c.id))).join('')}
+          ${sideBtn('lora', 'LoRAs', cnt('lora'), dot('lora'))}
         </nav>
         <div class="lib-main">
           <div class="toolbar">
-            <h2 class="tb-title">${esc(title)} <small class="muted">${list.length}</small></h2>
-            <input class="input grow" type="search" placeholder="Search…" data-q value="${esc(st.q)}">
+            <div class="search-field">${ic('search', 16)}<input class="input" type="search" placeholder="Search names, sources, prompts, outfits…" data-q value="${esc(st.q)}"></div>
             ${isLoraCat ? `<select class="input" data-base><option value="">All base models</option>${S.settings.baseModels.map((b) => `<option ${b === st.base ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select>` : ''}
             ${srcList.length ? `<select class="input" data-source><option value="">All sources</option>${srcList.map((s) => `<option value="${esc(s)}" ${s === st.source ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>` : ''}
             <select class="input" data-sort>
               ${[['name', 'A → Z'], ['source', 'By source'], ['newest', 'Newest'], ['used', 'Most used'], ['recent', 'Recently used']].map(([v, l]) => `<option value="${v}" ${v === st.sort ? 'selected' : ''}>${l}</option>`).join('')}
             </select>
-            ${st.cat === 'character' && S.settings.quickAdd ? '<button class="btn" data-act="quick-add" title="Add characters from the Danbooru character list (experimental)">⚡ Quick add</button>' : ''}
-            ${canAdd ? `<button class="btn primary" data-act="new">＋ New ${isLoraCat ? 'LoRA' : ''}</button>` : ''}
           </div>
           ${tags.length ? `<div class="tag-bar">${tags.map(([t, n]) => `<button class="tag ${st.tag === t ? 'on' : ''}" data-tag="${esc(t)}">${esc(t)} <small>${n}</small></button>`).join('')}</div>` : ''}
           <div class="grid" data-grid>
-            ${renderCards(list) || `<div class="empty">
+            ${renderCards(list) || `<div class="empty">${ic(st.q || st.tag || st.source ? 'search' : 'sparkles', 28)}
               ${st.q || st.tag || st.source ? 'No matches.' : isLoraCat
                 ? 'No LoRAs yet. Go to <a href="#import">Import</a> and scan your Stability Matrix LoRA folder, or add one by hand.'
-                : 'Empty. Click ＋ New to add your first one.'}</div>`}
+                : 'Nothing here yet. Click <b>New</b>, or drop an image here to start one.'}</div>`}
           </div>
         </div>
       </div>`;

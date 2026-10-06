@@ -352,7 +352,15 @@
     const arr = [];
     for (const [catId, rows] of Object.entries(STARTER)) {
       for (const [name, prompt, tags, source = ''] of rows) {
-        arr.push({ id: uid(), cat: catId, name, source, prompt, negative: '', tags: PV.splitTags(tags), notes: '', image: '', fav: false, loras: [] });
+        const it = { id: uid(), cat: catId, name, source, prompt, negative: '', tags: PV.splitTags(tags), notes: '', image: '', fav: false, loras: [] };
+        if (catId === 'character') {
+          it.prompt = '1girl, solo, long silver hair, red eyes';
+          it.variants = [
+            { id: uid(), name: 'Knight armor', prompt: 'silver plate armor, cape, gauntlets', image: '', lora: null },
+            { id: uid(), name: 'Casual', prompt: 'white sweater, jeans, scarf', image: '', lora: null },
+          ];
+        }
+        arr.push(it);
       }
     }
     await saveItems(arr);

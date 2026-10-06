@@ -6,9 +6,12 @@
   function render() {
     const st = S.settings;
     root.innerHTML = `
+      <header class="page-head">
+        <div><h1>Settings</h1><p class="sub">Categories, prompt output, experiments and your data.</p></div>
+      </header>
       <div class="settings">
         <section class="panel">
-          <div class="panel-head"><h3>🗂 Categories</h3><button class="btn sm" data-act="add-cat">＋ Add category</button></div>
+          <div class="panel-head"><h3>${PV.icon('layers', 18)} Categories</h3><button class="btn sm" data-act="add-cat">＋ Add category</button></div>
           <p class="muted small">These are the builder slots. Their order is the order they appear in the prompt. "Negative" categories go into the negative prompt.
             You can use <code>__id__</code> inside any prompt to insert a random item from a category.</p>
           <div class="cat-list">
@@ -26,7 +29,7 @@
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h3>✏️ Prompt output</h3></div>
+          <div class="panel-head"><h3>${PV.icon('sparkles', 18)} Prompt output</h3></div>
           <div class="form-grid">
             <label>LoRA format
               <select class="input" data-s="loraFormat">
@@ -48,13 +51,13 @@
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h3>🧠 Base models</h3></div>
+          <div class="panel-head"><h3>${PV.icon('puzzle', 18)} Base models</h3></div>
           <p class="muted small">Used to tag LoRAs and to filter the randomizer. Comma separated.</p>
           <input class="input" data-s="baseModels" value="${esc(st.baseModels.join(', '))}">
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h3>🧪 Experimental</h3></div>
+          <div class="panel-head"><h3>${PV.icon('zap', 18)} Experimental</h3></div>
           <label class="check wrap"><input type="checkbox" data-s="imageSearch" ${st.imageSearch ? 'checked' : ''}>
             <span><b>Image search button</b>: adds a 🔍 to the Name field and to Library cards. It opens a search for the name + source in your browser.
             Drag the image you like back onto the item to use it.</span></label>
@@ -76,14 +79,14 @@
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h3>🎨 Appearance</h3></div>
+          <div class="panel-head"><h3>${PV.icon('sun', 18)} Appearance</h3></div>
           <div class="seg" role="group" aria-label="Theme">
             ${['system', 'dark', 'light'].map((t) => `<button class="${st.theme === t ? 'on' : ''}" data-act="theme" data-v="${t}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}
           </div>
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h3>💽 Storage</h3></div>
+          <div class="panel-head"><h3>${PV.icon('save', 18)} Storage</h3></div>
           <p class="muted small" data-storage>Checking…</p>
           <div class="row">
             <button class="btn" data-act="starter">Add starter pack again</button>

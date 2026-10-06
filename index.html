@@ -4,38 +4,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Prompt Vault</title>
-  <meta name="description" content="Store characters, poses, outfits and LoRAs for local AI image generation, and build or randomize prompts for ComfyUI.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <meta name="description" content="Store characters, outfits, poses and LoRAs for local AI image generation, and build or randomize prompts for ComfyUI.">
+  <link rel="icon" href="build/icon.png">
+  <link rel="preload" href="fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#builder"><span class="logo">🎲</span> Prompt Vault</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#builder">Builder</a>
-      <a href="#library">Library</a>
-      <a href="#presets">Presets</a>
-      <a href="#history">History</a>
-      <a href="#import">Import</a>
-      <a href="#settings">Settings</a>
-    </nav>
-    <button class="btn primary sm" id="rand-char" title="Random character (shortcut: C)">🎲 <span>Random character</span></button>
-    <button class="icon-btn" id="theme-toggle" title="Toggle light/dark" aria-label="Toggle theme">◐</button>
-  </header>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="brand" href="#builder"><img src="build/icon.png" alt=""><span class="brand-name">Prompt Vault</span></a>
+      <nav class="nav" aria-label="Main">
+        <a href="#builder" data-i="wand"><span>Builder</span></a>
+        <a href="#library" data-i="library"><span>Library</span></a>
+        <a href="#presets" data-i="bookmark"><span>Presets</span></a>
+        <a href="#history" data-i="history"><span>History</span></a>
+        <a href="#import" data-i="download"><span>Import</span></a>
+        <a href="#settings" data-i="settings"><span>Settings</span></a>
+      </nav>
+      <button class="btn grad block side-cta" id="rand-char" title="Random character (C)" data-i="dice"><span class="lbl-txt">Random character</span><kbd>C</kbd></button>
+      <div class="side-foot">
+        <button class="side-search" id="open-palette" title="Search everything (Ctrl+K)" data-i="search"><span>Search…</span><kbd>Ctrl K</kbd></button>
+        <button class="side-search" id="theme-toggle" title="Light / dark" data-i="moon"><span>Theme</span></button>
+      </div>
+    </aside>
 
-  <main>
-    <section class="view" id="view-builder" hidden></section>
-    <section class="view" id="view-library" hidden></section>
-    <section class="view" id="view-presets" hidden></section>
-    <section class="view" id="view-history" hidden></section>
-    <section class="view" id="view-import" hidden></section>
-    <section class="view" id="view-settings" hidden></section>
-  </main>
+    <main class="main">
+      <section class="view" id="view-builder" hidden></section>
+      <section class="view" id="view-library" hidden></section>
+      <section class="view" id="view-presets" hidden></section>
+      <section class="view" id="view-history" hidden></section>
+      <section class="view" id="view-import" hidden></section>
+      <section class="view" id="view-settings" hidden></section>
+    </main>
+  </div>
 
   <div id="modal-root"></div>
   <div id="toasts" aria-live="polite"></div>
 
   <script src="js/util.js"></script>
+  <script src="js/icons.js"></script>
   <script src="js/store.js"></script>
   <script src="js/prompt.js"></script>
   <script src="js/meta.js"></script>
@@ -47,6 +54,7 @@
   <script src="js/view-settings.js"></script>
   <script src="js/random-character.js"></script>
   <script src="js/quick-add.js"></script>
+  <script src="js/palette.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

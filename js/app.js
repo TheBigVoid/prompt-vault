@@ -30,7 +30,17 @@
     const t = S.settings.theme || 'system';
     if (t === 'system') document.documentElement.removeAttribute('data-theme');
     else document.documentElement.setAttribute('data-theme', t);
+    // theme button shows what you'd switch to
+    const btn = $('#theme-toggle');
+    if (btn) {
+      const old = btn.querySelector('svg.ico');
+      if (old) old.remove();
+      btn.insertAdjacentHTML('afterbegin', PV.icon(isDark() ? 'sun' : 'moon', 18));
+      btn.querySelector('span').textContent = isDark() ? 'Light mode' : 'Dark mode';
+    }
   }
+  const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark' ||
+    (!document.documentElement.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
   PV.applyTheme = applyTheme;
 
   // Re-render the visible view whenever data changes.
@@ -49,11 +59,13 @@
         <p>Private/incognito windows and some strict privacy settings block local storage. Try a normal window.</p></div>`;
       return;
     }
+    PV.hydrateIcons();
     applyTheme();
     window.addEventListener('hashchange', route);
     route();
 
     document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); PV.openPalette(); return; }
       if (isTyping(e) || e.ctrlKey || e.metaKey || e.altKey) return;
       if (document.querySelector('.modal-backdrop')) return;
       if ((e.key === 'r' || e.key === 'R') && current === 'builder') { e.preventDefault(); PV.builderView.randomize(); }
@@ -70,11 +82,10 @@
     window.addEventListener('drop', (e) => { if (PV.dragHasImage(e)) e.preventDefault(); });
 
     $('#rand-char').addEventListener('click', () => PV.randomCharacter());
+    $('#open-palette').addEventListener('click', () => PV.openPalette());
 
     $('#theme-toggle').addEventListener('click', () => {
-      const dark = document.documentElement.getAttribute('data-theme') === 'dark' ||
-        (!document.documentElement.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
-      S.settings.theme = dark ? 'light' : 'dark';
+      S.settings.theme = isDark() ? 'light' : 'dark';
       PV.saveSettings();
       applyTheme();
     });
