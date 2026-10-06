@@ -10,7 +10,7 @@
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder --win nsis",
-    "release": "electron-builder --win nsis --publish always"
+    "release": "node scripts/release.js"
   },
   "build": {
     "appId": "io.github.thebigvoid.promptvault",

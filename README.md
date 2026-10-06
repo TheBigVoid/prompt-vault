@@ -90,7 +90,7 @@ Then run `dist\PromptVault-Setup-<version>.exe`. It installs per-user with no ad
 
 **Auto-updates:** the desktop app checks GitHub Releases when it starts and every few hours, downloads new versions in the background, and shows **Restart to update** in the sidebar (or installs when you close the app). Your library isn't touched. **Settings → About & updates** shows your version and has a *Check for updates* button.
 
-To publish a new version: bump `version` in `package.json`, then run `npm run release` with a GitHub token in `GH_TOKEN`. That uploads the installer and `latest.yml` to a GitHub Release, which installed apps pick up automatically.
+To publish a new version: bump `version` in `package.json`, commit and push, then run `npm run release` (needs the GitHub CLI, logged in). It creates the GitHub Release and uploads the installer and `latest.yml`, which installed apps pick up automatically.
 
 The desktop app keeps its own library in `%APPDATA%\Prompt Vault`, so browser data isn't shared with it. Use **Export / Import backup** to move your library in. Keys: **F5** reload, **F11** fullscreen, **F12** dev tools.
 
