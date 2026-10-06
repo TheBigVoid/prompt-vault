@@ -17,7 +17,7 @@
     const name = (location.hash || '#builder').slice(1).split('?')[0];
     const key = VIEWS[name] ? name : 'builder';
     current = key;
-    $('#modal-root').innerHTML = '';
+    PV.closeAllModals();
     $$('.view').forEach((v) => { v.hidden = v.id !== 'view-' + key; });
     $$('.nav a').forEach((a) => a.classList.toggle('on', a.getAttribute('href') === '#' + key));
     const view = VIEWS[key]();

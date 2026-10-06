@@ -244,7 +244,7 @@
     try {
       const data = JSON.parse(await f.text());
       const r = await PV.importAll(data, replace ? 'replace' : 'merge');
-      toast(`Imported ${r.items} items, ${r.presets} presets`, 'ok', 4000);
+      toast(`Imported ${r.items} items, ${r.presets} presets${r.skipped ? ` (kept ${r.skipped} newer ${r.skipped === 1 ? 'copy' : 'copies'} from your library)` : ''}`, 'ok', 4000);
       PV.emit('data');
     } catch (e) {
       toast('Import failed: ' + e.message, 'err', 5000);

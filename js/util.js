@@ -157,6 +157,10 @@ window.PV = window.PV || {};
   }
 
   // ---------- Modals ----------
+  const openModals = new Set();
+  // Closes every open modal through its own close(), so onClose handlers run.
+  const closeAllModals = () => [...openModals].reverse().forEach((close) => close());
+
   function openModal(html, { wide = false, dismissable = true, onClose } = {}) {
     const root = $('#modal-root');
     const wrap = document.createElement('div');
@@ -167,12 +171,14 @@ window.PV = window.PV || {};
     const close = () => {
       if (closed) return;
       closed = true;
+      openModals.delete(close);
       wrap.remove();
       document.removeEventListener('keydown', onKey);
       if (onClose) onClose();
     };
     const onKey = (e) => { if (e.key === 'Escape' && root.lastElementChild === wrap) close(); };
     document.addEventListener('keydown', onKey);
+    openModals.add(close);
     if (dismissable) wrap.addEventListener('mousedown', (e) => { if (e.target === wrap) close(); });
     wrap.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', close));
     const el = wrap.firstElementChild;
@@ -264,6 +270,6 @@ window.PV = window.PV || {};
 
   Object.assign(PV, {
     catColor, initials, hydrateIcons, $, $$, esc, uid, debounce, splitTags, pick, fmtW, slug, stem, timeAgo, rng, newSeed,
-    IMAGE_SEARCH_SITES, openImageSearch, receiveSearchImage, toast, copyText, download, fileToThumb, isImageFile, dragHasImage, imageFromDrop, openModal, confirmBox, promptBox, normBase, compatLevel,
+    IMAGE_SEARCH_SITES, openImageSearch, receiveSearchImage, toast, copyText, download, fileToThumb, isImageFile, dragHasImage, imageFromDrop, openModal, closeAllModals, confirmBox, promptBox, normBase, compatLevel,
   });
 })(window.PV);
