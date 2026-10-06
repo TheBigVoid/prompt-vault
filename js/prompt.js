@@ -121,6 +121,12 @@
     for (const l of loras) {
       if (!l.item.file) warnings.push(`"${l.item.name}" has no file name set — ComfyUI needs the .safetensors name.`);
     }
+    // a character outfit plus the generic Outfit slot = two sets of clothes in one prompt
+    const worn = items.find((x) => x.variant && x.cat.kind !== 'negative');
+    const outfitSlot = b.slots.outfit;
+    if (worn && outfitSlot && outfitSlot.ids.some((id) => S.items.has(id))) {
+      warnings.push(`${worn.item.name} is wearing "${worn.variant.name}" and the Outfit slot has an outfit too. Remove one to avoid mixed clothes.`);
+    }
     const allText = [b.prefix, b.suffix, b.negative, ...items.map((x) => `${x.item.prompt} ${x.item.negative || ''} ${x.variant ? x.variant.prompt : ''}`)].join(' ');
     return { positive, negative, segments: segs, sep, loras, loraList, warnings, hasWildcards: hasWildcards(allText) };
   }
