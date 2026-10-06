@@ -270,7 +270,7 @@
       if (e.target.closest('[data-imgdrop]')) return el.querySelector('[data-imgfiles]').click();
       if (!act) return;
       if (act === 'export') {
-        PV.download(`prompt-vault-backup-${new Date().toISOString().slice(0, 10)}.json`, PV.exportAll());
+        PV.backups.exportDownload();
       } else if (act === 'do-import') doImport();
       else if (act === 'quick') quickAdd();
       else if (act.startsWith('p-')) {

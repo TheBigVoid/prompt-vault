@@ -15,6 +15,10 @@
           <div data-about></div>
         </section>
         <section class="panel">
+          <div class="panel-head"><h3>${PV.icon('save', 18)} Backups</h3></div>
+          <div data-backups></div>
+        </section>
+        <section class="panel">
           <div class="panel-head"><h3>${PV.icon('layers', 18)} Categories</h3><button class="btn sm" data-act="add-cat">＋ Add category</button></div>
           <p class="muted small">These are the builder slots. Their order is the order they appear in the prompt. "Negative" categories go into the negative prompt.
             You can use <code>__id__</code> inside any prompt to insert a random item from a category.</p>
@@ -100,6 +104,7 @@
       </div>`;
     storageInfo();
     PV.updates.renderAbout(root.querySelector('[data-about]'));
+    PV.backups.renderPanel(root.querySelector('[data-backups]'));
   }
 
   async function storageInfo() {

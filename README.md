@@ -88,6 +88,8 @@ npm run dist
 
 Then run `dist\PromptVault-Setup-<version>.exe`. It installs per-user with no admin needed. To try it without installing, use `npm start`.
 
+**Automatic backups:** the desktop app saves your whole library as a `.json` file in `Documents\Prompt Vault Backups` (changeable) when it starts, every 2 hours while you work if something changed, and before every update. The 10 newest automatic backups are kept, plus one per day for 30 days; manual backups are never deleted. If the library is ever much smaller than the newest backup when the app starts, it doesn't back up the damaged state and offers to restore instead. **Settings → Backups** lists them with one-click Restore.
+
 **Auto-updates:** the desktop app checks GitHub Releases when it starts and every few hours, downloads new versions in the background, and shows **Restart to update** in the sidebar (or installs when you close the app). Your library isn't touched. **Settings → About & updates** shows your version and has a *Check for updates* button.
 
 To publish a new version: bump `version` in `package.json`, commit and push, then run `npm run release` (needs the GitHub CLI, logged in). It creates the GitHub Release and uploads the installer and `latest.yml`, which installed apps pick up automatically.

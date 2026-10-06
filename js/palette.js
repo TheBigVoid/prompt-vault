@@ -17,7 +17,7 @@
       { icon: 'download', title: 'Go to Import', sub: 'LoRA folder, images, backups', run: go('#import') },
       { icon: 'settings', title: 'Go to Settings', run: go('#settings') },
       { icon: 'moon', title: 'Toggle light / dark', run: () => document.getElementById('theme-toggle').click() },
-      { icon: 'save', title: 'Export backup', sub: 'Download your whole library as .json', run: () => PV.download(`prompt-vault-backup-${new Date().toISOString().slice(0, 10)}.json`, PV.exportAll()) },
+      { icon: 'save', title: 'Export backup', sub: 'Download your whole library as .json', run: () => PV.backups.exportDownload() },
     ];
   }
 

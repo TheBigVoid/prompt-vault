@@ -698,3 +698,14 @@ details.panel[open] > summary .ico.chev { transform: rotate(180deg); }
   .update-banner .ub-bar { width: 100%; }
 }
 @media (max-width: 640px) { #update-banner { display: none; } }
+
+/* ---------- Backups ---------- */
+.bk-folder { display: flex; align-items: center; gap: 10px; margin: 12px 0; min-width: 0; }
+.bk-folder code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.bk-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.bk-row { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; background: var(--s2); border: 1px solid var(--line); }
+.bk-kind { flex: none; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; background: var(--s3); color: var(--text-2); min-width: 98px; text-align: center; }
+.bk-kind.manual { background: var(--accent-soft); color: var(--accent-ink); }
+.bk-kind.before-update { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
+.bk-kind.before-restore { background: color-mix(in srgb, var(--warn) 15%, transparent); color: var(--warn); }
+@media (max-width: 640px) { .bk-kind { min-width: 0; } }

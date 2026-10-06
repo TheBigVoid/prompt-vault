@@ -68,13 +68,18 @@
     if (msg.version) U.newVersion = msg.version;
     if (typeof msg.percent === 'number') U.percent = msg.percent;
     U.message = msg.message || '';
-    if (U.state === 'ready' && prev !== 'ready') PV.toast(`Update ${U.newVersion} downloaded. Restart when you're ready`, 'ok', 6000);
+    if (U.state === 'ready' && prev !== 'ready') {
+      PV.toast(`Update ${U.newVersion} downloaded. Restart when you're ready`, 'ok', 6000);
+      // it may also install on its own when the app closes, so back up now
+      PV.backups.beforeUpdate();
+    }
     refresh();
   }
 
   document.addEventListener('click', async (e) => {
     if (e.target.closest('[data-update-install]')) {
-      PV.toast('Restarting to install the update…');
+      PV.toast('Backing up your library, then restarting to update…');
+      await PV.backups.beforeUpdate(); // a fresh backup before any update
       await desk.installUpdate();
     } else if (e.target.closest('[data-update-check]')) {
       U.state = 'checking';

@@ -9,5 +9,12 @@ if (location.protocol === 'file:') {
     checkForUpdates: () => ipcRenderer.invoke('pv-update-check'),
     installUpdate: () => ipcRenderer.invoke('pv-update-install'),
     onUpdate: (cb) => ipcRenderer.on('pv-update', (_e, msg) => cb(msg)),
+    backup: {
+      write: (kind, json) => ipcRenderer.invoke('pv-backup-write', kind, json),
+      list: () => ipcRenderer.invoke('pv-backup-list'),
+      read: (name) => ipcRenderer.invoke('pv-backup-read', name),
+      openFolder: () => ipcRenderer.invoke('pv-backup-open'),
+      chooseFolder: () => ipcRenderer.invoke('pv-backup-choose'),
+    },
   });
 }

@@ -224,6 +224,13 @@
     return JSON.stringify({
       app: 'prompt-vault',
       version: BACKUP_VERSION,
+      // kept near the top so backup lists can show counts without reading the whole file
+      summary: {
+        items: S.items.size,
+        characters: [...S.items.values()].filter((i) => i.cat === 'character').length,
+        loras: [...S.items.values()].filter((i) => i.cat === 'lora').length,
+        presets: S.presets.length,
+      },
       exported: new Date().toISOString(),
       settings: S.settings,
       builder: S.builder,

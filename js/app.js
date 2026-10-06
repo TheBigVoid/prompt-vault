@@ -61,6 +61,7 @@
     }
     PV.hydrateIcons();
     PV.updates.init();
+    PV.backups.start();
     applyTheme();
     window.addEventListener('hashchange', route);
     route();

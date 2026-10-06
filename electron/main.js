@@ -288,6 +288,7 @@ function createWindow() {
 
 Menu.setApplicationMenu(null);
 app.whenReady().then(() => {
+  require('./backups').setup(fromApp, () => win);
   setupAutoUpdates();
   createWindow();
   // the page asks for the current state once it has loaded
