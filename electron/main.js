@@ -155,6 +155,52 @@ ipcMain.handle('pv-quick-add', async (e, data) => {
   return r || 'error';
 });
 
+// ---------- Auto-updates (GitHub Releases) ----------
+// Checks a few seconds after start and every 4 hours, downloads in the background,
+// and installs on restart (or the next time the app is closed).
+const fromApp = (e) => !!e.senderFrame && e.senderFrame.url.startsWith('file:');
+let updateState = { state: 'idle' };
+
+function sendUpdate(state, data) {
+  updateState = { state, ...data };
+  if (win && !win.isDestroyed()) win.webContents.send('pv-update', updateState);
+}
+
+function setupAutoUpdates() {
+  ipcMain.handle('pv-version', (e) => (fromApp(e) ? app.getVersion() : null));
+  if (!app.isPackaged) {
+    // running from source (npm start): nothing to update
+    ipcMain.handle('pv-update-check', (e) => (fromApp(e) ? { state: 'dev' } : null));
+    ipcMain.handle('pv-update-install', () => null);
+    return;
+  }
+  const { autoUpdater } = require('electron-updater');
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.on('checking-for-update', () => sendUpdate('checking'));
+  autoUpdater.on('update-available', (info) => sendUpdate('downloading', { version: info.version, percent: 0 }));
+  autoUpdater.on('update-not-available', () => sendUpdate('latest'));
+  autoUpdater.on('download-progress', (p) => sendUpdate('downloading', { version: updateState.version, percent: Math.round(p.percent) }));
+  autoUpdater.on('update-downloaded', (info) => sendUpdate('ready', { version: info.version }));
+  autoUpdater.on('error', (err) => sendUpdate('error', { message: String((err && err.message) || err).split('\n')[0] }));
+
+  const check = () => autoUpdater.checkForUpdates().catch(() => { /* reported through 'error' */ });
+  setTimeout(check, 5000);
+  setInterval(check, 4 * 60 * 60 * 1000);
+
+  ipcMain.handle('pv-update-check', async (e) => {
+    if (!fromApp(e)) return null;
+    if (updateState.state === 'downloading' || updateState.state === 'ready') return updateState;
+    await check();
+    return updateState;
+  });
+  ipcMain.handle('pv-update-install', (e) => {
+    if (!fromApp(e) || updateState.state !== 'ready') return false;
+    setImmediate(() => autoUpdater.quitAndInstall(true, true)); // silent install, reopen afterwards
+    return true;
+  });
+}
+
 function createWindow() {
   const s = loadState();
   win = new BrowserWindow({
@@ -168,7 +214,7 @@ function createWindow() {
     backgroundColor: '#0f0f14',
     icon: path.join(__dirname, '..', 'build', 'icon.png'),
     show: false,
-    webPreferences: { contextIsolation: true, sandbox: true, spellcheck: false },
+    webPreferences: { contextIsolation: true, sandbox: true, spellcheck: false, preload: path.join(__dirname, 'preload.js') },
   });
   if (s.maximized) win.maximize();
   win.loadFile(INDEX);
@@ -241,5 +287,10 @@ function createWindow() {
 }
 
 Menu.setApplicationMenu(null);
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  setupAutoUpdates();
+  createWindow();
+  // the page asks for the current state once it has loaded
+  win.webContents.on('did-finish-load', () => sendUpdate(updateState.state, updateState));
+});
 app.on('window-all-closed', () => app.quit());

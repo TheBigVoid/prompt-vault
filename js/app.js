@@ -60,6 +60,7 @@
       return;
     }
     PV.hydrateIcons();
+    PV.updates.init();
     applyTheme();
     window.addEventListener('hashchange', route);
     route();

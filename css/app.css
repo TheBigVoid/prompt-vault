@@ -676,3 +676,25 @@ details.panel[open] > summary .ico.chev { transform: rotate(180deg); }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 .card.drop-target, .grid.drop-target { outline: 2px dashed var(--accent); outline-offset: 4px; }
+
+/* ---------- Updates ---------- */
+.update-banner {
+  display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: 12px; margin-bottom: 4px;
+  background: var(--s2); border: 1px solid var(--line-2); font-size: 12.5px; animation: toastIn .25s ease;
+}
+.update-banner.ready { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.ub-row { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-2); }
+.ub-row .ub-text { flex: 1; }
+.update-banner .ico { color: var(--accent); }
+.update-banner .btn .ico { color: #fff; }
+.ub-bar { height: 5px; border-radius: 5px; background: var(--s4); overflow: hidden; }
+.ub-bar.big { height: 7px; margin-top: 12px; }
+.ub-bar span { display: block; height: 100%; background: var(--grad); border-radius: inherit; transition: width .3s ease; }
+.about-row { display: flex; align-items: center; gap: 14px; }
+.about-logo { width: 46px; height: 46px; border-radius: 12px; box-shadow: 0 6px 18px rgba(139, 108, 255, .35); }
+@media (max-width: 900px) {
+  .update-banner { padding: 8px; align-items: center; }
+  .update-banner .ub-text, .update-banner .ub-row b { display: none; }
+  .update-banner .ub-bar { width: 100%; }
+}
+@media (max-width: 640px) { #update-banner { display: none; } }
